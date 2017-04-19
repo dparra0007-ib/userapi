@@ -1,9 +1,14 @@
 version: '3'
 services:
   userapi-db:
-    image: dparra0007/userapi-db
+    build:
+      context: ./userapi-db
+    ports:
+      - 27017:27017
+      - 28017:28017
   userapi:
-    image: dparra0007/userapi
+    build:
+      context: ./userapi
     ports:
       - 3000:3000
     depends_on: 
