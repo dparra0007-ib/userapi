@@ -19,7 +19,7 @@ before_script:
 build:
   stage: build
   script:
-    - docker build -f userapi/Dockerfile --pull -t $CONTAINER_SERVICE_IMAGE .
+    - docker build --pull -t $CONTAINER_SERVICE_IMAGE ./userapi
     - docker push $CONTAINER_IMAGE
-    - docker build -f userapi/Dockerfile --pull -t $CONTAINER_SERVICE_RELEASE_IMAGE .
+    - docker build --pull -t $CONTAINER_SERVICE_RELEASE_IMAGE ./userapi
     - docker push $CONTAINER_RELEASE_IMAGE
