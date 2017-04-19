@@ -1,0 +1,30 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+stages:
+- build
+
+variables:
+  CONTAINER_SERVICE_IMAGE: dparra0007/userapi:$CI_RUNNER_ID
+  CONTAINER_SERVICE_RELEASE_IMAGE: dparra0007/userapi:latest
+
+  CONTAINER_DB_IMAGE: dparra0007/userapi-db:$CI_RUNNER_ID
+  CONTAINER_DB_RELEASE_IMAGE: dparra0007/userapi-db:latest
+
+before_script:
+  - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
+
+build:
+  stage: build
+  script:
+    - docker build --pull -t $CONTAINER_IMAGE -f userapi/Dockerfile .
+    - docker push $CONTAINER_IMAGE
+    - docker build --pull -t $CONTAINER_RELEASE_IMAGE -f userapi/Dockerfile .
+    - docker push $CONTAINER_RELEASE_IMAGE
+
+    - docker build --pull -t $CONTAINER_DB_IMAGE -f userapi-db/Dockerfile .
+    - docker push $CONTAINER_DB_IMAGE
+    - docker build --pull -t $CONTAINER_DB_RELEASE_IMAGE -f userapi-db/Dockerfile .
+    - docker push $CONTAINER_DB_RELEASE_IMAGE

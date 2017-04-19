@@ -1,0 +1,10 @@
+version: '3'
+services:
+  userapi-db:
+    image: dparra0007/userapi-db
+  userapi:
+    image: dparra0007/userapi
+    ports:
+      - 3000:3000
+    depends_on: 
+      - userapi-db
