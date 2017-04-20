@@ -1,5 +1,14 @@
 version: '3'
 services:
+  userapi-apigateway:
+    build:
+      context: ./userapi-apigateway
+    environment:
+      - SERVICE1=userapi
+    ports:
+      - 8080:8080
+    depends_on:
+      - userapi
   userapi-db:
     build:
       context: ./userapi-db
