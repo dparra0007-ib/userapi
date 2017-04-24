@@ -30,9 +30,9 @@ build:
     - docker build --pull -t $CONTAINER_SERVICE_RELEASE_IMAGE ./userapi
     - docker push $CONTAINER_SERVICE_RELEASE_IMAGE
 
-    - docker build --pull -t $CONTAINER_DB_IMAGE ./userapi
+    - docker build --pull -t $CONTAINER_DB_IMAGE ./userapi-db
     - docker push $CONTAINER_DB_IMAGE
-    - docker build --pull -t $CONTAINER_DB_RELEASE_IMAGE ./userapi
+    - docker build --pull -t $CONTAINER_DB_RELEASE_IMAGE ./userapi-db
     - docker push $CONTAINER_DB_RELEASE_IMAGE
 
     - docker build --pull -t $CONTAINER_APIGATEWAY_IMAGE ./userapi-apigateway
