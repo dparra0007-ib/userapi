@@ -20,7 +20,7 @@ router.post('/adduser', function(req, res) {
     var collection = db.get('userlist');
     collection.insert(req.body, function(err, result){
         res.send(
-            (err === null) ? { msg: 'received ' + process.env.NAME + ' ' + process.env.SURNAME } : { msg: err }
+            (err === null) ? { msg: process.env.USERAPI_ADDMESSAGE } : { msg: process.env.USERAPI_ERRMESSAGE }
         );
     });
 });
@@ -33,7 +33,7 @@ router.delete('/deleteuser/:id', function(req, res) {
     var collection = db.get('userlist');
     var userToDelete = req.params.id;
     collection.remove({ '_id' : userToDelete }, function(err) {
-        res.send((err === null) ? { msg: '' } : { msg:'error: ' + err });
+        res.send((err === null) ? { msg: process.env.USERAPI_DELMESSAGE } : { msg:'error: ' + process.env.USERAPI_ERRMESSAGE });
     });
 });
 
