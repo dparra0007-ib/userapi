@@ -20,7 +20,7 @@ router.post('/adduser', function(req, res) {
     var collection = db.get('userlist');
     collection.insert(req.body, function(err, result){
         res.send(
-            (err === null) ? { msg: '' } : { msg: err }
+            (err === null) ? { msg: 'received ' + process.env.NAME + ' ' + process.env.SURNAME } : { msg: err }
         );
     });
 });
