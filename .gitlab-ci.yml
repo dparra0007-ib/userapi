@@ -28,9 +28,9 @@ before_script:
 build:
   stage: build
   script:
-    - docker build --pull -t $CONTAINER_DISCOVERY_IMAGE ./userapi
+    - docker build --pull -t $CONTAINER_DISCOVERY_IMAGE ./userapi-discovery
     - docker push $CONTAINER_DISCOVERY_IMAGE
-    - docker build --pull -t $CONTAINER_DISCOVERY_RELEASE_IMAGE ./userapi
+    - docker build --pull -t $CONTAINER_DISCOVERY_RELEASE_IMAGE ./userapi-discovery
     - docker push $CONTAINER_DISCOVERY_RELEASE_IMAGE
 
     - docker build --pull -t $CONTAINER_DB_IMAGE ./userapi-db
