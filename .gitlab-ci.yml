@@ -16,6 +16,9 @@ variables:
   CONTAINER_APIGATEWAY_IMAGE: dparra0007/userapi-apigateway:$CI_RUNNER_ID
   CONTAINER_APIGATEWAY_RELEASE_IMAGE: dparra0007/userapi-apigateway:latest
 
+  CONTAINER_DISCOVERY_IMAGE: dparra0007/userapi-discovery:$CI_RUNNER_ID
+  CONTAINER_DISCOVERY_RELEASE_IMAGE: dparra0007/userapi-discovery:latest
+
 before_script:
   - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
 
@@ -25,15 +28,20 @@ before_script:
 build:
   stage: build
   script:
-    - docker build --pull -t $CONTAINER_SERVICE_IMAGE ./userapi
-    - docker push $CONTAINER_SERVICE_IMAGE
-    - docker build --pull -t $CONTAINER_SERVICE_RELEASE_IMAGE ./userapi
-    - docker push $CONTAINER_SERVICE_RELEASE_IMAGE
+    - docker build --pull -t $CONTAINER_DISCOVERY_IMAGE ./userapi
+    - docker push $CONTAINER_DISCOVERY_IMAGE
+    - docker build --pull -t $CONTAINER_DISCOVERY_RELEASE_IMAGE ./userapi
+    - docker push $CONTAINER_DISCOVERY_RELEASE_IMAGE
 
     - docker build --pull -t $CONTAINER_DB_IMAGE ./userapi-db
     - docker push $CONTAINER_DB_IMAGE
     - docker build --pull -t $CONTAINER_DB_RELEASE_IMAGE ./userapi-db
     - docker push $CONTAINER_DB_RELEASE_IMAGE
+
+    - docker build --pull -t $CONTAINER_SERVICE_IMAGE ./userapi
+    - docker push $CONTAINER_SERVICE_IMAGE
+    - docker build --pull -t $CONTAINER_SERVICE_RELEASE_IMAGE ./userapi
+    - docker push $CONTAINER_SERVICE_RELEASE_IMAGE
 
     - docker build --pull -t $CONTAINER_APIGATEWAY_IMAGE ./userapi-apigateway
     - docker push $CONTAINER_APIGATEWAY_IMAGE

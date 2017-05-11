@@ -15,10 +15,19 @@ services:
     ports:
       - 27017:27017
       - 28017:28017
+  userapi-discovery:
+    build:
+      context: ./userapi-discovery
+    ports:
+      - 8761:8761
   userapi:
     build:
       context: ./userapi
     ports:
       - 3000:3000
+    links:
+      - userapi-db
+      - userapi-discovery
     depends_on: 
       - userapi-db
+      - userapi-discovery
