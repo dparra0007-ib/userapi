@@ -22,8 +22,8 @@ variables:
 before_script:
   - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
 
-#  - /usr/local/bin/oc login ${OC_URL} --token=${OC_TOKEN}
-#  - /usr/local/bin/oc project userapi || /usr/local/bin/oc new-project userapi
+  - /usr/local/bin/oc login ${OC_URL} --token=${OC_TOKEN}
+  - /usr/local/bin/oc project userapi || /usr/local/bin/oc new-project userapi
 
 build:
   stage: build
