@@ -1,4 +1,4 @@
-FROM node:onbuild
+FROM node:6.10.3-onbuild
 
 ENV GLOBALCONF="https://github.com/dparra0007/W53-GLOBAL-CONFIG.git"
 ENV GLOBALCONFFILE="./W53-GLOBAL-CONFIG/env.sh"
