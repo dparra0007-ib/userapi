@@ -5,6 +5,8 @@ services:
 
 stages:
 - build
+- push
+- deploy
 
 variables:
   CONTAINER_SERVICE_IMAGE: dparra0007/userapi:$CI_RUNNER_ID
@@ -29,21 +31,28 @@ build:
   stage: build
   script:
     - docker build --pull -t $CONTAINER_DISCOVERY_IMAGE ./userapi-discovery
-    - docker push $CONTAINER_DISCOVERY_IMAGE
     - docker build --pull -t $CONTAINER_DISCOVERY_RELEASE_IMAGE ./userapi-discovery
-    - docker push $CONTAINER_DISCOVERY_RELEASE_IMAGE
 
     - docker build --pull -t $CONTAINER_DB_IMAGE ./userapi-db
-    - docker push $CONTAINER_DB_IMAGE
     - docker build --pull -t $CONTAINER_DB_RELEASE_IMAGE ./userapi-db
-    - docker push $CONTAINER_DB_RELEASE_IMAGE
 
     - docker build --pull -t $CONTAINER_SERVICE_IMAGE ./userapi
-    - docker push $CONTAINER_SERVICE_IMAGE
     - docker build --pull -t $CONTAINER_SERVICE_RELEASE_IMAGE ./userapi
-    - docker push $CONTAINER_SERVICE_RELEASE_IMAGE
 
     - docker build --pull -t $CONTAINER_APIGATEWAY_IMAGE ./userapi-apigateway
-    - docker push $CONTAINER_APIGATEWAY_IMAGE
     - docker build --pull -t $CONTAINER_APIGATEWAY_RELEASE_IMAGE ./userapi-apigateway
+
+push:
+  stage: push
+  script:
+    - docker push $CONTAINER_DISCOVERY_IMAGE
+    - docker push $CONTAINER_DISCOVERY_RELEASE_IMAGE
+
+    - docker push $CONTAINER_DB_IMAGE
+    - docker push $CONTAINER_DB_RELEASE_IMAGE
+
+    - docker push $CONTAINER_SERVICE_IMAGE
+    - docker push $CONTAINER_SERVICE_RELEASE_IMAGE
+
+    - docker push $CONTAINER_APIGATEWAY_IMAGE
     - docker push $CONTAINER_APIGATEWAY_RELEASE_IMAGE
