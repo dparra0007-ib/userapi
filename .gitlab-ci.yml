@@ -58,10 +58,26 @@ build_apigateway:
     - docker build --pull -t $CONTAINER_APIGATEWAY_RELEASE_IMAGE ./userapi-apigateway
     - docker push $CONTAINER_APIGATEWAY_RELEASE_IMAGE
 
-deploy:
+deploy_staging:
   stage: deploy
   script:
     - docker pull $CONTAINER_DISCOVERY_RELEASE_IMAGE
     - docker pull $CONTAINER_DB_RELEASE_IMAGE
     - docker pull $CONTAINER_SERVICE_RELEASE_IMAGE
     - docker pull $CONTAINER_APIGATEWAY_RELEASE_IMAGE
+  environment:
+    name: staging
+    url: http://userapi-apigateway.userapi.d6e30f11.svc.dockerapp.io:8080/userapi/swagger.json
+  only:
+    - master
+    
+deploy_prod:
+  stage: deploy
+  script:
+    - echo "Deploy to production server"
+  environment:
+    name: production
+    url: https://example.com
+  when: manual
+  only:
+    - master
