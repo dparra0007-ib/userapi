@@ -3,7 +3,7 @@ FROM node:6.10.3-onbuild
 ENV GLOBALCONF="https://github.com/dparra0007/W53-GLOBAL-CONFIG.git"
 ENV GLOBALCONFFILE="./W53-GLOBAL-CONFIG/env.sh"
 
-ENV SYSTEMCONF="https://dparra0007@gitlab.com/dparra0007/W53-USERAPI-CONFIG.git"
+ENV SYSTEMCONF="https://github.com/dparra0007/W53-USERAPI-CONFIG.git"
 ENV SYSTEMCONFFILE="./W53-USERAPI-CONFIG/env.sh"
 
 RUN apt-get update
