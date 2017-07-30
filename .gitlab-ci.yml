@@ -4,80 +4,148 @@ services:
   - docker:dind
 
 stages:
-- build
+- build docker
 - deploy
 
 variables:
-  CONTAINER_SERVICE_IMAGE: dparra0007/userapi:$CI_RUNNER_ID
-  CONTAINER_SERVICE_RELEASE_IMAGE: dparra0007/userapi:latest
+  CONTAINER_SERVICE_IMAGE: dparra0007/userapi
+  CONTAINER_DB_IMAGE: dparra0007/userapi-db
+  CONTAINER_APIGATEWAY_IMAGE: dparra0007/userapi-apigateway
+  CONTAINER_DISCOVERY_IMAGE: dparra0007/userapi-discovery
 
-  CONTAINER_DB_IMAGE: dparra0007/userapi-db:$CI_RUNNER_ID
-  CONTAINER_DB_RELEASE_IMAGE: dparra0007/userapi-db:latest
+#before_script:
+#  - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
 
-  CONTAINER_APIGATEWAY_IMAGE: dparra0007/userapi-apigateway:$CI_RUNNER_ID
-  CONTAINER_APIGATEWAY_RELEASE_IMAGE: dparra0007/userapi-apigateway:latest
-
-  CONTAINER_DISCOVERY_IMAGE: dparra0007/userapi-discovery:$CI_RUNNER_ID
-  CONTAINER_DISCOVERY_RELEASE_IMAGE: dparra0007/userapi-discovery:latest
-
-before_script:
-  - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
-
-  - /usr/local/bin/oc login ${OC_URL} --token=${OC_TOKEN}
-  - /usr/local/bin/oc project userapi || /usr/local/bin/oc new-project userapi
+#  - /usr/local/bin/oc login ${OC_URL} --token=${OC_TOKEN}
+#  - /usr/local/bin/oc project userapi || /usr/local/bin/oc new-project userapi
 
 build_service:
-  stage: build
+  stage: build docker
   script:
-    - docker build --pull -t $CONTAINER_SERVICE_IMAGE ./userapi
-    - docker push $CONTAINER_SERVICE_IMAGE
-    - docker build --pull -t $CONTAINER_SERVICE_RELEASE_IMAGE ./userapi
-    - docker push $CONTAINER_SERVICE_RELEASE_IMAGE
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker build -t registry.gitlab.com/w53/w53-userapi/userapi ./userapi
+    - docker tag registry.gitlab.com/w53/w53-userapi registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME
+    - docker push registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME
+  except:
+    - triggers
 
 build_discovery:
-  stage: build
+  stage: build docker
   script:
-    - docker build --pull -t $CONTAINER_DISCOVERY_IMAGE ./userapi-discovery
-    - docker push $CONTAINER_DISCOVERY_IMAGE
-    - docker build --pull -t $CONTAINER_DISCOVERY_RELEASE_IMAGE ./userapi-discovery
-    - docker push $CONTAINER_DISCOVERY_RELEASE_IMAGE
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker build -t registry.gitlab.com/w53/w53-userapi/userapi-discovery ./userapi-discovery
+    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-discovery registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME
+    - docker push registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME
+  except:
+    - triggers
 
 build_db:
-  stage: build
+  stage: build docker
   script:
-    - docker build --pull -t $CONTAINER_DB_IMAGE ./userapi-db
-    - docker push $CONTAINER_DB_IMAGE
-    - docker build --pull -t $CONTAINER_DB_RELEASE_IMAGE ./userapi-db
-    - docker push $CONTAINER_DB_RELEASE_IMAGE
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker build -t registry.gitlab.com/w53/w53-userapi/userapi-db ./userapi-db
+    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-db registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME
+    - docker push registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME
+  except:
+    - triggers
 
 build_apigateway:
-  stage: build
+  stage: build docker
   script:
-    - docker build --pull -t $CONTAINER_APIGATEWAY_IMAGE ./userapi-apigateway
-    - docker push $CONTAINER_APIGATEWAY_IMAGE
-    - docker build --pull -t $CONTAINER_APIGATEWAY_RELEASE_IMAGE ./userapi-apigateway
-    - docker push $CONTAINER_APIGATEWAY_RELEASE_IMAGE
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker build -t registry.gitlab.com/w53/w53-userapi/userapi-apigateway ./userapi-apigateway
+    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-apigateway registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME
+    - docker push registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME
+  except:
+    - triggers
 
-deploy_staging:
+#deploy_staging:
+#  stage: deploy
+#  script:
+#    - docker pull $CONTAINER_DISCOVERY_RELEASE_IMAGE
+#    - docker pull $CONTAINER_DB_RELEASE_IMAGE
+#    - docker pull $CONTAINER_SERVICE_RELEASE_IMAGE
+#    - docker pull $CONTAINER_APIGATEWAY_RELEASE_IMAGE
+#  environment:
+#    name: staging
+#    url: http://userapi-apigateway.userapi.d6e30f11.svc.dockerapp.io:8080/userapi/swagger.json
+#  only:
+#    - master
+
+deploy_staging_service:
   stage: deploy
   script:
-    - docker pull $CONTAINER_DISCOVERY_RELEASE_IMAGE
-    - docker pull $CONTAINER_DB_RELEASE_IMAGE
-    - docker pull $CONTAINER_SERVICE_RELEASE_IMAGE
-    - docker pull $CONTAINER_APIGATEWAY_RELEASE_IMAGE
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker pull registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME
+    - docker tag registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME $CONTAINER_SERVICE_IMAGE
+    - docker tag registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME $CONTAINER_SERVICE_IMAGE:$CI_PIPELINE_ID-$CI_JOB_ID
+    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
+    - docker push $CONTAINER_SERVICE_IMAGE
+    - docker push $CONTAINER_SERVICE_IMAGE:$CI_PIPELINE_ID-$CI_JOB_ID
   environment:
     name: staging
-    url: http://userapi-apigateway.userapi.d6e30f11.svc.dockerapp.io:8080/userapi/swagger.json
+  only:
+    - master
+
+deploy_staging_discovery:
+  stage: deploy
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker pull registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME
+    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME $CONTAINER_DISCOVERY_IMAGE
+    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME $CONTAINER_DISCOVERY_IMAGE:$CI_PIPELINE_ID-$CI_JOB_ID
+    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
+    - docker push $CONTAINER_DISCOVERY_IMAGE
+    - docker push $CONTAINER_DISCOVERY_IMAGE:$CI_PIPELINE_ID-$CI_JOB_ID
+  environment:
+    name: staging
+  only:
+    - master
+
+deploy_staging_db:
+  stage: deploy
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker pull registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME
+    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME $CONTAINER_DB_IMAGE
+    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME $CONTAINER_DB_IMAGE:$CI_PIPELINE_ID-$CI_JOB_ID
+    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
+    - docker push $CONTAINER_DB_IMAGE
+    - docker push $CONTAINER_DB_IMAGE:$CI_PIPELINE_ID-$CI_JOB_ID
+  environment:
+    name: staging
+  only:
+    - master
+
+deploy_staging_apigateway:
+  stage: deploy
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker pull registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME
+    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME $CONTAINER_APIGATEWAY_IMAGE
+    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME $CONTAINER_APIGATEWAY_IMAGE:$CI_PIPELINE_ID-$CI_JOB_ID
+    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
+    - docker push $CONTAINER_APIGATEWAY_IMAGE
+    - docker push $CONTAINER_APIGATEWAY_IMAGE:$CI_PIPELINE_ID-$CI_JOB_ID
+  environment:
+    name: staging
   only:
     - master
 
 deploy_prod:
   stage: deploy
+  image: appropriate/curl
   script:
     - echo "Deploy to production server"
+    - curl -X POST https://cloud.docker.com/api/app/v1/service/6d07ee88-1f5c-4e94-aee5-1934c4c36b7a/trigger/8b45491a-2f4b-4049-a194-2f607bb1e3aa/call/
+    - curl -X POST https://cloud.docker.com/api/app/v1/service/2880a57f-e3da-47d3-8c88-7f9473751e25/trigger/19561cf4-9afe-4d0a-ae06-4cd104e1053b/call/
+    - curl -X POST https://cloud.docker.com/api/app/v1/service/cdd0144d-fe0f-4079-8903-1c8d49d621d0/trigger/d72dde24-7983-4759-8b5c-e0cb04c91518/call/
+    - curl -X POST https://cloud.docker.com/api/app/v1/service/947799be-0784-4d2c-8f55-20619fab7e15/trigger/2ea9b88a-ccd0-4802-8876-8fc2c661151c/call/
   environment:
     name: production
-    url: https://example.com
+    url: http://userapi-apigateway.w53-userapi.947799be.svc.dockerapp.io:8080/userapi/swagger.json
   when: manual
   only:
     - master
+  except:
+    - triggers
