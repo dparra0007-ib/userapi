@@ -1,7 +1,8 @@
-image: dparra0007/docker:latest
+image: dparra0007/docker:451
 
 services:
-  - docker:dind
+  - name: dparra0007/docker-dind:421
+    alias: docker
 
 stages:
 - build docker
@@ -74,9 +75,15 @@ build_apigateway:
 
 deploy_staging_service:
   stage: deploy
+  image: dparra0007/docker:448
+  variables:
+    IMG_BLD: "registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME"
+    PATH_DFILE: "./userapi/Dockerfile"
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker pull registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME
+    - docker exec anchore anchore analyze --image registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME
+    - docker exec anchore anchore gate --image registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME
     - docker tag registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME $CONTAINER_SERVICE_IMAGE
     - docker tag registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME $CONTAINER_SERVICE_IMAGE:$CI_PIPELINE_ID-$CI_JOB_ID
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
@@ -89,9 +96,15 @@ deploy_staging_service:
 
 deploy_staging_discovery:
   stage: deploy
+  image: dparra0007/docker:448
+  variables:
+    IMG_BLD: "registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME"
+    PATH_DFILE: "./userapi-discovery/Dockerfile"
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker pull registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME
+    - docker exec anchore anchore analyze --image registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME
+    - docker exec anchore anchore gate --image registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME
     - docker tag registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME $CONTAINER_DISCOVERY_IMAGE
     - docker tag registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME $CONTAINER_DISCOVERY_IMAGE:$CI_PIPELINE_ID-$CI_JOB_ID
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
@@ -104,9 +117,15 @@ deploy_staging_discovery:
 
 deploy_staging_db:
   stage: deploy
+  image: dparra0007/docker:448
+  variables:
+    IMG_BLD: "registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME"
+    PATH_DFILE: "./userapi-db/Dockerfile"
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker pull registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME
+    - docker exec anchore anchore analyze --image registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME
+    - docker exec anchore anchore gate --image registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME
     - docker tag registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME $CONTAINER_DB_IMAGE
     - docker tag registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME $CONTAINER_DB_IMAGE:$CI_PIPELINE_ID-$CI_JOB_ID
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
@@ -119,9 +138,15 @@ deploy_staging_db:
 
 deploy_staging_apigateway:
   stage: deploy
+  image: dparra0007/docker:448
+  variables:
+    IMG_BLD: "registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME"
+    PATH_DFILE: "./userapi-apigateway/Dockerfile"
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker pull registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME
+    - docker exec anchore anchore analyze --image registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME
+    - docker exec anchore anchore gate --image registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME
     - docker tag registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME $CONTAINER_APIGATEWAY_IMAGE
     - docker tag registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME $CONTAINER_APIGATEWAY_IMAGE:$CI_PIPELINE_ID-$CI_JOB_ID
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
