@@ -5,6 +5,7 @@ services:
     alias: docker
 
 stages:
+- test code
 - build docker
 - deploy
 
@@ -14,11 +15,20 @@ variables:
   CONTAINER_APIGATEWAY_IMAGE: dparra0007/userapi-apigateway
   CONTAINER_DISCOVERY_IMAGE: dparra0007/userapi-discovery
 
-#before_script:
-#  - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
-
-#  - /usr/local/bin/oc login ${OC_URL} --token=${OC_TOKEN}
-#  - /usr/local/bin/oc project userapi || /usr/local/bin/oc new-project userapi
+static_test_service:
+  stage: test code
+  script:
+    - docker run --rm -v $(pwd):/data -w /data dparra0007/sonar-scanner:20171010-1 sonar-scanner
+     -Dsonar.projectKey=$CI_PROJECT_NAMESPACE:$CI_PROJECT_NAME 
+     -Dsonar.projectName=$CI_PROJECT_NAME 
+     -Dsonar.branch=$CI_COMMIT_REF_NAME 
+     -Dsonar.projectVersion=$CI_JOB_ID 
+     -Dsonar.sources=./userapi 
+     -Dsonar.gitlab.project_id=$CI_PROJECT_ID 
+     -Dsonar.gitlab.commit_sha=$CI_COMMIT_SHA 
+     -Dsonar.gitlab.ref_name=$CI_COMMIT_REF_NAME
+  except:
+    - triggers
 
 build_service:
   stage: build docker
@@ -59,19 +69,6 @@ build_apigateway:
     - docker push registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME
   except:
     - triggers
-
-#deploy_staging:
-#  stage: deploy
-#  script:
-#    - docker pull $CONTAINER_DISCOVERY_RELEASE_IMAGE
-#    - docker pull $CONTAINER_DB_RELEASE_IMAGE
-#    - docker pull $CONTAINER_SERVICE_RELEASE_IMAGE
-#    - docker pull $CONTAINER_APIGATEWAY_RELEASE_IMAGE
-#  environment:
-#    name: staging
-#    url: http://userapi-apigateway.userapi.d6e30f11.svc.dockerapp.io:8080/userapi/swagger.json
-#  only:
-#    - master
 
 deploy_staging_service:
   stage: deploy
