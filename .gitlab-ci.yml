@@ -118,9 +118,6 @@ deploy_staging_db:
   variables:
     IMG_BLD: "registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME"
     PATH_DFILE: "./userapi-db/Dockerfile"
-  before_script:
-    - apk --update add --no-cache libarchive-tools
-    - export tar='bsdtar'
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker pull registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME
