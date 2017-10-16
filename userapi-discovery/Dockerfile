@@ -1,6 +1,8 @@
-FROM dparra0007/discovery
+FROM dparra0007/discovery:20171015.1
 
 COPY src/main/resources/ src/main/resources/
+
+USER 1001
 
 RUN mvn clean package
 
