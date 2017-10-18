@@ -81,10 +81,10 @@ deploy_staging_service:
     - docker pull registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME
     - docker exec anchore anchore analyze --image registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME
     - docker exec anchore anchore gate --image registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME
-    - docker tag registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME $CONTAINER_SERVICE_IMAGE
+    - docker tag registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME $CONTAINER_SERVICE_IMAGE:$CI_COMMIT_REF_NAME
     - docker tag registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME $CONTAINER_SERVICE_IMAGE:$CI_COMMIT_REF_NAME-$CI_PIPELINE_ID-$CI_JOB_ID
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
-    - docker push $CONTAINER_SERVICE_IMAGE
+    - docker push $CONTAINER_SERVICE_IMAGE:$CI_COMMIT_REF_NAME
     - docker push $CONTAINER_SERVICE_IMAGE:$CI_COMMIT_REF_NAME-$CI_PIPELINE_ID-$CI_JOB_ID
   environment:
     name: staging
@@ -103,10 +103,10 @@ deploy_staging_discovery:
     - docker pull registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME
     - docker exec anchore anchore analyze --image registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME
     - docker exec anchore anchore gate --image registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME
-    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME $CONTAINER_DISCOVERY_IMAGE
+    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME $CONTAINER_DISCOVERY_IMAGE:$CI_COMMIT_REF_NAME
     - docker tag registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME $CONTAINER_DISCOVERY_IMAGE:$CI_COMMIT_REF_NAME-$CI_PIPELINE_ID-$CI_JOB_ID
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
-    - docker push $CONTAINER_DISCOVERY_IMAGE
+    - docker push $CONTAINER_DISCOVERY_IMAGE:$CI_COMMIT_REF_NAME
     - docker push $CONTAINER_DISCOVERY_IMAGE:$CI_COMMIT_REF_NAME-$CI_PIPELINE_ID-$CI_JOB_ID
   environment:
     name: staging
@@ -125,10 +125,10 @@ deploy_staging_db:
     - docker pull registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME
     - docker exec anchore anchore analyze --image registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME
     - docker exec anchore anchore gate --image registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME
-    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME $CONTAINER_DB_IMAGE
+    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME $CONTAINER_DB_IMAGE:$CI_COMMIT_REF_NAME
     - docker tag registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME $CONTAINER_DB_IMAGE:$CI_COMMIT_REF_NAME-$CI_PIPELINE_ID-$CI_JOB_ID
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
-    - docker push $CONTAINER_DB_IMAGE
+    - docker push $CONTAINER_DB_IMAGE:$CI_COMMIT_REF_NAME
     - docker push $CONTAINER_DB_IMAGE:$CI_COMMIT_REF_NAME-$CI_PIPELINE_ID-$CI_JOB_ID
   environment:
     name: staging
@@ -147,10 +147,10 @@ deploy_staging_apigateway:
     - docker pull registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME
     - docker exec anchore anchore analyze --image registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME
     - docker exec anchore anchore gate --image registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME
-    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME $CONTAINER_APIGATEWAY_IMAGE
+    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME $CONTAINER_APIGATEWAY_IMAGE:$CI_COMMIT_REF_NAME
     - docker tag registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME $CONTAINER_APIGATEWAY_IMAGE:$CI_COMMIT_REF_NAME-$CI_PIPELINE_ID-$CI_JOB_ID
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
-    - docker push $CONTAINER_APIGATEWAY_IMAGE
+    - docker push $CONTAINER_APIGATEWAY_IMAGE:$CI_COMMIT_REF_NAME
     - docker push $CONTAINER_APIGATEWAY_IMAGE:$CI_COMMIT_REF_NAME-$CI_PIPELINE_ID-$CI_JOB_ID
   environment:
     name: staging
