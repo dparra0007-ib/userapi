@@ -160,13 +160,16 @@ deploy_staging_apigateway:
 
 deploy_prod:
   stage: deploy
-  image: appropriate/curl
+  variables:
+    OC_URL: $OC_URL
+    OC_TOKEN: $OC_TOKEN
+  before_script:
+    - oc login $OC_URL --token $OC_TOKEN
+    - oc project $CI_PROJECT_NAME | oc new-project $CI_PROJECT_NAME
+    - docker run -it dparra0007/config W53-USERAPI-CONFIG $CI_PROJECT_NAME
   script:
-    - echo "Deploy to production server"
-    - curl -X POST https://cloud.docker.com/api/app/v1/service/6d07ee88-1f5c-4e94-aee5-1934c4c36b7a/trigger/8b45491a-2f4b-4049-a194-2f607bb1e3aa/call/
-    - curl -X POST https://cloud.docker.com/api/app/v1/service/2880a57f-e3da-47d3-8c88-7f9473751e25/trigger/19561cf4-9afe-4d0a-ae06-4cd104e1053b/call/
-    - curl -X POST https://cloud.docker.com/api/app/v1/service/cdd0144d-fe0f-4079-8903-1c8d49d621d0/trigger/d72dde24-7983-4759-8b5c-e0cb04c91518/call/
-    - curl -X POST https://cloud.docker.com/api/app/v1/service/947799be-0784-4d2c-8f55-20619fab7e15/trigger/2ea9b88a-ccd0-4802-8876-8fc2c661151c/call/
+    - oc create --filename=deployment.yml
+    - oc expose service userapi-apigateway
   environment:
     name: production
     url: http://userapi-apigateway.w53-userapi.947799be.svc.dockerapp.io:8080/userapi/swagger.json

@@ -40,6 +40,27 @@ items:
           ports:
           - containerPort: 3000
           resources: {}
+          env:
+          - name: GLOBAL_GREETINGAPI_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: global-config
+                key: global.greetingapi.endpoint
+          - name: USERAPI_ERRMESSAGE
+            valueFrom:
+              configMapKeyRef:
+                name: userapi-config
+                key: userapi.errmessage
+          - name: USERAPI_ADDMESSAGE
+            valueFrom:
+              configMapKeyRef:
+                name: userapi-config
+                key: userapi.addmessage
+          - name: USERAPI_DELMESSAGE
+            valueFrom:
+              configMapKeyRef:
+                name: userapi-config
+                key: userapi.delmessage
     test: false
     triggers:
     - type: ConfigChange
@@ -60,13 +81,13 @@ items:
   spec:
     tags:
     - annotations:
-        openshift.io/imported-from: dparra0007/userapi-apigateway
+        openshift.io/imported-from: dparra0007/userapi-apigateway:openshift
       from:
         kind: DockerImage
-        name: dparra0007/userapi-apigateway
+        name: dparra0007/userapi-apigateway:openshift
       generation: null
       importPolicy: {}
-      name: latest
+      name: openshift
   status:
     dockerImageRepository: ""
 - apiVersion: v1
@@ -90,7 +111,7 @@ items:
         - env:
           - name: SERVICE1
             value: userapi
-          image: dparra0007/userapi-apigateway
+          image: dparra0007/userapi-apigateway:openshift
           name: userapi-apigateway
           ports:
           - containerPort: 8080
@@ -104,7 +125,7 @@ items:
         - userapi-apigateway
         from:
           kind: ImageStreamTag
-          name: userapi-apigateway:latest
+          name: userapi-apigateway:openshift
       type: ImageChange
   status: {}
 - apiVersion: v1
@@ -115,13 +136,13 @@ items:
   spec:
     tags:
     - annotations:
-        openshift.io/imported-from: dparra0007/userapi-db
+        openshift.io/imported-from: dparra0007/userapi-db:openshift
       from:
         kind: DockerImage
-        name: dparra0007/userapi-db
+        name: dparra0007/userapi-db:openshift
       generation: null
       importPolicy: {}
-      name: latest
+      name: openshift
   status:
     dockerImageRepository: ""
 - apiVersion: v1
@@ -142,7 +163,7 @@ items:
           deploymentconfig: userapi-db
       spec:
         containers:
-        - image: dparra0007/userapi-db
+        - image: dparra0007/userapi-db:openshift
           name: userapi-db
           ports:
           - containerPort: 27017
@@ -157,7 +178,7 @@ items:
         - userapi-db
         from:
           kind: ImageStreamTag
-          name: userapi-db:latest
+          name: userapi-db:openshift
       type: ImageChange
   status: {}
 - apiVersion: v1
@@ -168,13 +189,13 @@ items:
   spec:
     tags:
     - annotations:
-        openshift.io/imported-from: dparra0007/userapi-discovery
+        openshift.io/imported-from: dparra0007/userapi-discovery:openshift
       from:
         kind: DockerImage
-        name: dparra0007/userapi-discovery
+        name: dparra0007/userapi-discovery:openshift
       generation: null
       importPolicy: {}
-      name: latest
+      name: openshift
   status:
     dockerImageRepository: ""
 - apiVersion: v1
@@ -195,7 +216,7 @@ items:
           deploymentconfig: userapi-discovery
       spec:
         containers:
-        - image: dparra0007/userapi-discovery
+        - image: dparra0007/userapi-discovery:openshift
           name: userapi-discovery
           ports:
           - containerPort: 8761
@@ -209,7 +230,7 @@ items:
         - userapi-discovery
         from:
           kind: ImageStreamTag
-          name: userapi-discovery:latest
+          name: userapi-discovery:openshift
       type: ImageChange
   status: {}
 - apiVersion: v1
