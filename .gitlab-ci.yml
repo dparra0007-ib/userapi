@@ -172,7 +172,7 @@ deploy_prod:
     - oc expose service userapi-apigateway
   environment:
     name: production
-    url: http://userapi-apigateway.w53-userapi.947799be.svc.dockerapp.io:8080/userapi/swagger.json
+    url: http://userapi-apigateway-w53-userapi.apps.ocp-1.cloud.iairgroup.com/userapi/swagger.json
   when: manual
   only:
     - master

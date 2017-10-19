@@ -44,22 +44,22 @@ items:
           - name: GLOBAL_GREETINGAPI_ENDPOINT
             valueFrom:
               configMapKeyRef:
-                name: global-config
+                name: w53-global-config
                 key: global.greetingapi.endpoint
           - name: USERAPI_ERRMESSAGE
             valueFrom:
               configMapKeyRef:
-                name: userapi-config
+                name: w53-userapi-config
                 key: userapi.errmessage
           - name: USERAPI_ADDMESSAGE
             valueFrom:
               configMapKeyRef:
-                name: userapi-config
+                name: w53-userapi-config
                 key: userapi.addmessage
           - name: USERAPI_DELMESSAGE
             valueFrom:
               configMapKeyRef:
-                name: userapi-config
+                name: w53-userapi-config
                 key: userapi.delmessage
     test: false
     triggers:
