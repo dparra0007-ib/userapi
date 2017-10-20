@@ -116,7 +116,7 @@ deploy_staging_discovery:
 
 deploy_staging_db:
   stage: deploy
-  image: dparra0007/docker:448
+  image: dparra0007/docker:anchore-20171016-1
   variables:
     IMG_BLD: "registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME"
     PATH_DFILE: "./userapi-db/Dockerfile"
