@@ -116,15 +116,12 @@ deploy_staging_discovery:
 
 deploy_staging_db:
   stage: deploy
-  image: dparra0007/docker:anchore-20171016-1
   variables:
     IMG_BLD: "registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME"
     PATH_DFILE: "./userapi-db/Dockerfile"
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker pull registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME
-    - docker exec anchore anchore analyze --image registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME
-    - docker exec anchore anchore gate --image registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME
     - docker tag registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME $CONTAINER_DB_IMAGE:$CI_COMMIT_REF_NAME
     - docker tag registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME $CONTAINER_DB_IMAGE:$CI_COMMIT_REF_NAME-$CI_PIPELINE_ID-$CI_JOB_ID
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
