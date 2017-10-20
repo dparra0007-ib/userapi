@@ -162,7 +162,7 @@ deploy_prod:
     OC_TOKEN: $OC_TOKEN
   before_script:
     - oc login $OC_URL --token $OC_TOKEN
-    - oc project $(echo $CI_PROJECT_NAME | tr '[:upper:]' '[:lower:]') | oc new-project $(echo $CI_PROJECT_NAME | tr '[:upper:]' '[:lower:]')
+    - oc new-project $(echo $CI_PROJECT_NAME | tr '[:upper:]' '[:lower:]')
     - docker pull dparra0007/config:20171019-2
     - docker run -it --env OC_URL=$OC_URL --env OC_TOKEN=$OC_TOKEN dparra0007/config:20171019-2 W53-GLOBAL-CONFIG $CI_PROJECT_NAME
     - docker run -it --env OC_URL=$OC_URL --env OC_TOKEN=$OC_TOKEN dparra0007/config:20171019-2 W53-USERAPI-CONFIG $CI_PROJECT_NAME
