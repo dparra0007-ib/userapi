@@ -18,11 +18,11 @@ var app = express();
 var swaggerDefinition = {
   info: {
     title: 'Node Swagger API',
-    version: '1.0.0',
+    version: '1.0',
     description: 'Demonstrating how to desribe a RESTful API with Swagger',
   },
   host: 'localhost:3000',
-  basePath: '/',
+  basePath: '/1.0/',
 };
 
 // options for the swagger docs
@@ -54,7 +54,7 @@ app.use(function(req,res,next){
     next();
 });
 
-app.use('/', routes);
+app.use('/1.0', routes);
 
 app.get('/swagger.json', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
