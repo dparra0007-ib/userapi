@@ -1,0 +1,87 @@
+---
+swagger: "2.0"
+info:
+  description: "Demonstrating how to desribe a RESTful API with Swagger"
+  version: "1.0"
+  title: "Node Swagger API"
+host: "localhost:3000"
+basePath: "/1.0/"
+tags: []
+paths:
+  /users/userlist:
+    get:
+      tags:
+      - "Users"
+      description: "Returns all users"
+      operationId: "usersUserlistGET"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "An array of users"
+          schema:
+            $ref: "#/definitions/User"
+      x-swagger-router-controller: "Users"
+  /users/adduser:
+    post:
+      tags:
+      - "Users"
+      description: "Creates a new user"
+      operationId: "usersAdduserPOST"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "user"
+        description: "User object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        200:
+          description: "Successfully created"
+      x-swagger-router-controller: "Users"
+  /users/deleteuser/{id}:
+    delete:
+      tags:
+      - "Users"
+      description: "Deletes a single user"
+      operationId: "usersDeleteuserIdDELETE"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "User's id"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "Successfully deleted"
+      x-swagger-router-controller: "Users"
+securityDefinitions: {}
+definitions:
+  User:
+    properties:
+      username:
+        type: "string"
+      email:
+        type: "integer"
+      fullname:
+        type: "string"
+      age:
+        type: "integer"
+      location:
+        type: "string"
+      gender:
+        type: "string"
+    example:
+      gender: "gender"
+      location: "location"
+      fullname: "fullname"
+      email: 0
+      age: 6
+      username: "username"
+parameters: {}
+responses: {}
