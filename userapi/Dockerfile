@@ -8,9 +8,11 @@ ENV SYSTEMCONFFILE="./W53-USERAPI-CONFIG/env.sh"
 
 RUN apt-get update
 RUN apt-get install git-core
+RUN apt-get install dos2unix
 
 RUN chown -R 1000:0 /usr/src/app && chmod -R og+rwx /usr/src/app
 RUN chmod +x ./start.sh
+RUN dos2unix ./start.sh
 
 USER 1000
 
