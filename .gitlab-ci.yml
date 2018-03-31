@@ -6,8 +6,8 @@ services:
 
 stages:
 - test code
-- build docker
-- deploy
+- build application
+- push binaries
 
 variables:
   CONTAINER_SERVICE_IMAGE: dparra0007/userapi
@@ -31,7 +31,7 @@ static_test_service:
     - triggers
 
 build_service:
-  stage: build docker
+  stage: build application
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker build -t registry.gitlab.com/w53/w53-userapi/userapi ./userapi
@@ -41,7 +41,7 @@ build_service:
     - triggers
 
 build_discovery:
-  stage: build docker
+  stage: build application
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker build -t registry.gitlab.com/w53/w53-userapi/userapi-discovery ./userapi-discovery
@@ -51,7 +51,7 @@ build_discovery:
     - triggers
 
 build_db:
-  stage: build docker
+  stage: build application
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker build -t registry.gitlab.com/w53/w53-userapi/userapi-db ./userapi-db
@@ -61,7 +61,7 @@ build_db:
     - triggers
 
 build_apigateway:
-  stage: build docker
+  stage: build application
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker build -t registry.gitlab.com/w53/w53-userapi/userapi-apigateway ./userapi-apigateway
@@ -71,7 +71,7 @@ build_apigateway:
     - triggers
 
 deploy_staging_service:
-  stage: deploy
+  stage: push binaries
   image: dparra0007/docker:448
   variables:
     IMG_BLD: "registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME"
@@ -92,7 +92,7 @@ deploy_staging_service:
     - master
 
 deploy_staging_discovery:
-  stage: deploy
+  stage: push binaries
   image: dparra0007/docker:448
   variables:
     IMG_BLD: "registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME"
@@ -113,7 +113,7 @@ deploy_staging_discovery:
     - master
 
 deploy_staging_db:
-  stage: deploy
+  stage: push binaries
   image: dparra0007/docker:448
   variables:
     IMG_BLD: "registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME"
@@ -134,7 +134,7 @@ deploy_staging_db:
     - master
 
 deploy_staging_apigateway:
-  stage: deploy
+  stage: push binaries
   image: dparra0007/docker:448
   variables:
     IMG_BLD: "registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME"
@@ -155,7 +155,7 @@ deploy_staging_apigateway:
     - master
 
 deploy_prod:
-  stage: deploy
+  stage: push binaries
   image: appropriate/curl
   script:
     - echo "Deploy to production server"
