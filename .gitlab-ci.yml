@@ -84,7 +84,7 @@ validate_api_description:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - export TAG=$CI_COMMIT_REF_NAME 
     - docker-compose -f docker-compose.design.test.yml up -d
-    - sleep 30s
+    - sleep 90s
     - docker logs $(docker ps -a --filter "name= w53userapi_userapi-design-test_1" --format "{{.ID}}")
   after_script:
     - docker stop $(docker ps -a --filter status=running --format "{{.ID}}") > /dev/null

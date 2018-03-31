@@ -1,9 +1,7 @@
 version: '3'
 services:
   userapi-apigateway:
-    #image: registry.gitlab.com/w53/w53-userapi/userapi-apigateway:${TAG}
-    build:
-      context: ./userapi-apigateway
+    image: registry.gitlab.com/w53/w53-userapi/userapi-apigateway:${TAG}
     environment:
       - SERVICE1=userapi
     ports:
@@ -11,16 +9,12 @@ services:
     depends_on:
       - userapi
   userapi-db:
-    #image: registry.gitlab.com/w53/w53-userapi/userapi-db:${TAG}
-    build:
-      context: ./userapi-db
+    image: registry.gitlab.com/w53/w53-userapi/userapi-db:${TAG}
     ports:
       - 27017:27017
       - 28017:28017
   userapi:
-    #image: registry.gitlab.com/w53/w53-userapi/userapi:${TAG}
-    build:
-      context: ./userapi
+    image: registry.gitlab.com/w53/w53-userapi/userapi:${TAG}
     ports:
       - 3000:3000
     links:
