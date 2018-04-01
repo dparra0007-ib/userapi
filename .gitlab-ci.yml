@@ -6,8 +6,9 @@ services:
 
 stages:
 - test code
-- build docker
-- deploy
+- build application
+- test application
+- push binaries
 
 variables:
   CONTAINER_SERVICE_IMAGE: dparra0007/userapi
@@ -31,7 +32,7 @@ static_test_service:
     - triggers
 
 build_service:
-  stage: build docker
+  stage: build application
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker build -t registry.gitlab.com/w53/w53-userapi/userapi ./userapi
@@ -41,7 +42,7 @@ build_service:
     - triggers
 
 build_discovery:
-  stage: build docker
+  stage: build application
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker build -t registry.gitlab.com/w53/w53-userapi/userapi-discovery ./userapi-discovery
@@ -51,7 +52,7 @@ build_discovery:
     - triggers
 
 build_db:
-  stage: build docker
+  stage: build application
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker build -t registry.gitlab.com/w53/w53-userapi/userapi-db ./userapi-db
@@ -61,7 +62,7 @@ build_db:
     - triggers
 
 build_apigateway:
-  stage: build docker
+  stage: build application
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker build -t registry.gitlab.com/w53/w53-userapi/userapi-apigateway ./userapi-apigateway
@@ -70,8 +71,57 @@ build_apigateway:
   except:
     - triggers
 
-deploy_staging_service:
-  stage: deploy
+functional_test_service:
+  stage: test application
+  before_script:
+    - apk update
+    - apk upgrade
+    - apk add python python-dev py-pip build-base
+    - curl -L https://github.com/docker/compose/releases/download/1.14.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+    - chmod +x /usr/local/bin/docker-compose
+    - pip install docker-compose
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - export TAG=$CI_COMMIT_REF_NAME 
+    - docker-compose -f docker-compose.functional.test.yml up -d
+    - sleep 30s
+    - docker logs $(docker ps -a --filter ancestor=dparra0007/newman:20170712-4 --format "{{.ID}}")
+  after_script:
+    - docker stop $(docker ps -a --filter status=running --format "{{.ID}}") > /dev/null
+    - docker rm $(docker ps -a -q) -f > /dev/null
+    - docker rmi $(docker images -q) -f > /dev/null || true
+  when: manual
+  only:
+    - master
+  except:
+    - triggers
+
+validate_api_description:
+  stage: test application
+  before_script:
+    - apk update
+    - apk upgrade
+    - apk add python python-dev py-pip build-base
+    - curl -L https://github.com/docker/compose/releases/download/1.14.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+    - chmod +x /usr/local/bin/docker-compose
+    - pip install docker-compose
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - export TAG=$CI_COMMIT_REF_NAME 
+    - docker-compose -f docker-compose.design.test.yml up -d
+    - sleep 90s
+    - docker logs $(docker ps -a --filter "name= w53userapi_userapi-design-test_1" --format "{{.ID}}")
+  after_script:
+    - docker stop $(docker ps -a --filter status=running --format "{{.ID}}") > /dev/null
+    - docker rm $(docker ps -a -q) -f > /dev/null
+    - docker rmi $(docker images -q) -f > /dev/null || true
+  only:
+    - master
+  except:
+    - triggers
+
+push_image_service:
+  stage: push binaries
   image: dparra0007/docker:448
   variables:
     IMG_BLD: "registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME"
@@ -92,8 +142,8 @@ deploy_staging_service:
     - master
     - openshift
 
-deploy_staging_discovery:
-  stage: deploy
+push_image_discovery:
+  stage: push binaries
   image: dparra0007/docker:448
   variables:
     IMG_BLD: "registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME"
@@ -114,8 +164,9 @@ deploy_staging_discovery:
     - master
     - openshift
 
-deploy_staging_db:
-  stage: deploy
+push_image_db:
+  stage: push binaries
+  image: dparra0007/docker:448
   variables:
     IMG_BLD: "registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME"
     PATH_DFILE: "./userapi-db/Dockerfile"
@@ -133,8 +184,8 @@ deploy_staging_db:
     - master
     - openshift
 
-deploy_staging_apigateway:
-  stage: deploy
+push_image_apigateway:
+  stage: push binaries
   image: dparra0007/docker:448
   variables:
     IMG_BLD: "registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME"

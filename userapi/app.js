@@ -4,7 +4,6 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var swaggerJSDoc = require('swagger-jsdoc');
 // Database
 var mongo = require('mongodb');
 var monk = require('monk');
@@ -13,28 +12,6 @@ var db = monk('userapi-db:27017/nodetest2');
 var routes = require('./routes/index');
 
 var app = express();
-
-// swagger definition
-var swaggerDefinition = {
-  info: {
-    title: 'Node Swagger API',
-    version: '1.0',
-    description: 'Demonstrating how to desribe a RESTful API with Swagger',
-  },
-  host: 'localhost:3000',
-  basePath: '/1.0/',
-};
-
-// options for the swagger docs
-var options = {
-  // import swaggerDefinitions
-  swaggerDefinition: swaggerDefinition,
-  // path to the API docs
-  apis: ['./routes/*.js'],
-};
-
-// initialize swagger-jsdoc
-var swaggerSpec = swaggerJSDoc(options);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -55,11 +32,6 @@ app.use(function(req,res,next){
 });
 
 app.use('/1.0', routes);
-
-app.get('/swagger.json', function(req, res) {
-  res.setHeader('Content-Type', 'application/json');
-  res.send(swaggerSpec);
-});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
