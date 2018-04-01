@@ -9,6 +9,7 @@ stages:
 - build application
 - test application
 - push binaries
+- deploy application
 
 variables:
   CONTAINER_SERVICE_IMAGE: dparra0007/userapi
@@ -207,7 +208,7 @@ push_image_apigateway:
     - openshift
 
 deploy_prod:
-  stage: deploy
+  stage: deploy application
   variables:
     OC_URL: $OC_URL
     OC_TOKEN: $OC_TOKEN
