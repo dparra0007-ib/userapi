@@ -94,6 +94,7 @@ functional_test_service:
   when: manual
   only:
     - master
+    - openshift
   except:
     - triggers
 
@@ -118,6 +119,7 @@ validate_api_description:
     - docker rmi $(docker images -q) -f > /dev/null || true
   only:
     - master
+    - openshift
   except:
     - triggers
 
