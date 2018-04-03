@@ -19,4 +19,4 @@ modules:
 reporting:
 - module: blazemeter
   test: CI
-  project: GREETINGAPI
+  project: USERAPI
