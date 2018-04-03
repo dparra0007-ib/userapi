@@ -1,0 +1,22 @@
+execution:
+- executor: newman
+#  concurrency: 2
+#  ramp-up: 10s
+#  hold-for: 30s
+  iterations: 5
+  scenario: simple
+
+scenarios:
+  simple:
+    script: collection.json
+    environment: ci.json
+    think-time: 0.75
+
+modules:
+  blazemeter:
+    token: 76ce8e49694f1902ade67df0:651e79244b13ff5f65d19c34a329080b7bdfe7c6c0934efe81b1172bcbb60d112fa27f61
+
+reporting:
+- module: blazemeter
+  test: CI
+  project: USERAPI

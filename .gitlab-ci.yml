@@ -72,6 +72,30 @@ build_apigateway:
   except:
     - triggers
 
+validate_api_description:
+  stage: test application
+  before_script:
+    - apk update
+    - apk upgrade
+    - apk add python python-dev py-pip build-base
+    - curl -L https://github.com/docker/compose/releases/download/1.14.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+    - chmod +x /usr/local/bin/docker-compose
+    - pip install docker-compose
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - export TAG=$CI_COMMIT_REF_NAME 
+    - docker-compose -f docker-compose.design.test.yml up -d
+    - sleep 90s
+    - docker logs $(docker ps -a --filter "name= w53userapi_userapi-design-test_1" --format "{{.ID}}")
+  after_script:
+    - docker stop $(docker ps -a --filter status=running --format "{{.ID}}") > /dev/null
+    - docker rm $(docker ps -a -q) -f > /dev/null
+    - docker rmi $(docker images -q) -f > /dev/null || true
+  only:
+    - master
+  except:
+    - triggers
+
 functional_test_service:
   stage: test application
   before_script:
@@ -98,7 +122,7 @@ functional_test_service:
   except:
     - triggers
 
-validate_api_description:
+performance_test_service:
   stage: test application
   before_script:
     - apk update
@@ -110,13 +134,15 @@ validate_api_description:
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - export TAG=$CI_COMMIT_REF_NAME 
-    - docker-compose -f docker-compose.design.test.yml up -d
-    - sleep 90s
-    - docker logs $(docker ps -a --filter "name= w53userapi_userapi-design-test_1" --format "{{.ID}}")
+    - export TEST_NUMBER=$CI_COMMIT_SHA
+    - docker-compose -f docker-compose.performance.test.yml up -d
+    - sleep 120s
+    - docker logs $(docker ps -a --filter ancestor=dparra0007/taurus:20180402-2 --format "{{.ID}}")
   after_script:
     - docker stop $(docker ps -a --filter status=running --format "{{.ID}}") > /dev/null
     - docker rm $(docker ps -a -q) -f > /dev/null
     - docker rmi $(docker images -q) -f > /dev/null || true
+  when: manual
   only:
     - master
     - openshift
