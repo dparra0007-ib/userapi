@@ -24,6 +24,8 @@ services:
   userapi-performance-test:
     build:
       context: ./userapi-performance-test
+    environment:
+      - REPORT=${TEST_NUMBER}
     links:
       - userapi-apigateway
     depends_on:
