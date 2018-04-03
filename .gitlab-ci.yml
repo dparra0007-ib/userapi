@@ -120,7 +120,7 @@ functional_test_service:
   except:
     - triggers
 
-  performance_test_service:
+performance_test_service:
   stage: test application
   before_script:
     - apk update
