@@ -165,7 +165,7 @@ push_image_service:
     - docker tag registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME $CONTAINER_SERVICE_IMAGE:$CI_PIPELINE_ID
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
     - docker push $CONTAINER_SERVICE_IMAGE
-    - docker push $CONTAINER_SERVICE_IMAGE$CI_PIPELINE_ID
+    - docker push $CONTAINER_SERVICE_IMAGE:$CI_PIPELINE_ID
   environment:
     name: staging
   only:
