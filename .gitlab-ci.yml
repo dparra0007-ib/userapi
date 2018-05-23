@@ -10,6 +10,7 @@ stages:
 - test application
 - push binaries
 - deploy application
+- regression test deploy
 
 variables:
   CONTAINER_SERVICE_IMAGE: dparra0007/userapi
