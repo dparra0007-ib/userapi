@@ -27,3 +27,13 @@ services:
     depends_on: 
       - userapi-db
       - userapi-discovery
+      - userapi-config
+    volumes:
+      - ${PWD}/userapi-config:/usr/src/conf
+  userapi-config:
+    image: dparra0007/static-config:20180522-2
+    environment:
+      - GLOBALCONF=https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/master/env.sh
+      - SYSTEMCONF=https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/userapi/env.sh
+    volumes:
+      - ${PWD}/userapi-config:/usr/src/app/conf

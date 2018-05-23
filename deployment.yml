@@ -1,6 +1,20 @@
 apiVersion: v1
 items:
 - apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    creationTimestamp: null
+    labels:
+      io.kompose.service: userapi-config-claim0
+    name: userapi-config-claim0
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 100Mi
+  status: {}
+- apiVersion: v1
   kind: ImageStream
   metadata:
     creationTimestamp: null
@@ -8,13 +22,30 @@ items:
   spec:
     tags:
     - annotations:
-        openshift.io/imported-from: dparra0007/userapi:openshift
+        openshift.io/imported-from: dparra0007/userapi:{{TAG_SERVICE}}
       from:
         kind: DockerImage
-        name: dparra0007/userapi:openshift
+        name: dparra0007/userapi:{{TAG_SERVICE}}
       generation: null
       importPolicy: {}
-      name: openshift
+      name: "{{TAG_SERVICE}}"
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    name: dparra0007-config
+  spec:
+    tags:
+    - annotations:
+        openshift.io/imported-from: dparra0007/static-config:20180522-2
+      from:
+        kind: DockerImage
+        name: dparra0007/static-config:20180522-2
+      generation: null
+      importPolicy: {}
+      name: "20180522-2"
   status:
     dockerImageRepository: ""
 - apiVersion: v1
@@ -35,32 +66,28 @@ items:
           deploymentconfig: userapi
       spec:
         containers:
-        - image: dparra0007/userapi:openshift
+        - image: dparra0007/userapi:{{TAG_SERVICE}}
           name: userapi
           ports:
           - containerPort: 3000
           resources: {}
+          volumeMounts:
+          - mountPath: /usr/src/conf
+            name: userapi-config-claim0
+        volumes:
+        - name: userapi-config-claim0
+          persistentVolumeClaim:
+            claimName: userapi-config-claim0
+        - image: dparra0007/static-config:20180522-2
+          name: dparra0007-config
           env:
-          - name: GLOBAL_GREETINGAPI_ENDPOINT
-            valueFrom:
-              configMapKeyRef:
-                name: w53-global-config
-                key: global.greetingapi.endpoint
-          - name: USERAPI_ERRMESSAGE
-            valueFrom:
-              configMapKeyRef:
-                name: w53-userapi-config
-                key: userapi.errmessage
-          - name: USERAPI_ADDMESSAGE
-            valueFrom:
-              configMapKeyRef:
-                name: w53-userapi-config
-                key: userapi.addmessage
-          - name: USERAPI_DELMESSAGE
-            valueFrom:
-              configMapKeyRef:
-                name: w53-userapi-config
-                key: userapi.delmessage
+          - name: GLOBALCONF
+            value: https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/master/env.sh
+          - name: SYSTEMCONF
+            value: https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/userapi/env.sh
+          volumeMounts:
+          - mountPath: /usr/src/app/conf
+            name: userapi-config-claim0
     test: false
     triggers:
     - type: ConfigChange
@@ -70,7 +97,7 @@ items:
         - userapi
         from:
           kind: ImageStreamTag
-          name: userapi:openshift
+          name: userapi:{{TAG_SERVICE}}
       type: ImageChange
   status: {}
 - apiVersion: v1
@@ -81,13 +108,13 @@ items:
   spec:
     tags:
     - annotations:
-        openshift.io/imported-from: dparra0007/userapi-apigateway:openshift
+        openshift.io/imported-from: dparra0007/userapi-apigateway:{{TAG_APIGATEWAY}}
       from:
         kind: DockerImage
-        name: dparra0007/userapi-apigateway:openshift
+        name: dparra0007/userapi-apigateway:{{TAG_APIGATEWAY}}
       generation: null
       importPolicy: {}
-      name: openshift
+      name: "{{TAG_APIGATEWAY}}"
   status:
     dockerImageRepository: ""
 - apiVersion: v1
@@ -111,7 +138,7 @@ items:
         - env:
           - name: SERVICE1
             value: userapi
-          image: dparra0007/userapi-apigateway:openshift
+          image: dparra0007/userapi-apigateway:{{TAG_APIGATEWAY}}
           name: userapi-apigateway
           ports:
           - containerPort: 8080
@@ -125,7 +152,7 @@ items:
         - userapi-apigateway
         from:
           kind: ImageStreamTag
-          name: userapi-apigateway:openshift
+          name: userapi-apigateway:{{TAG_APIGATEWAY}}
       type: ImageChange
   status: {}
 - apiVersion: v1
@@ -136,13 +163,13 @@ items:
   spec:
     tags:
     - annotations:
-        openshift.io/imported-from: dparra0007/userapi-db:openshift
+        openshift.io/imported-from: dparra0007/userapi-db:{{TAG_DB}}
       from:
         kind: DockerImage
-        name: dparra0007/userapi-db:openshift
+        name: dparra0007/userapi-db:{{TAG_DB}}
       generation: null
       importPolicy: {}
-      name: openshift
+      name: "{{TAG_DB}}"
   status:
     dockerImageRepository: ""
 - apiVersion: v1
@@ -163,7 +190,7 @@ items:
           deploymentconfig: userapi-db
       spec:
         containers:
-        - image: dparra0007/userapi-db:openshift
+        - image: dparra0007/userapi-db:{{TAG_DB}}
           name: userapi-db
           ports:
           - containerPort: 27017
@@ -178,7 +205,7 @@ items:
         - userapi-db
         from:
           kind: ImageStreamTag
-          name: userapi-db:openshift
+          name: userapi-db:{{TAG_DB}}
       type: ImageChange
   status: {}
 - apiVersion: v1
@@ -189,13 +216,13 @@ items:
   spec:
     tags:
     - annotations:
-        openshift.io/imported-from: dparra0007/userapi-discovery:openshift
+        openshift.io/imported-from: dparra0007/userapi-discovery:{{TAG_DISCOVERY}}
       from:
         kind: DockerImage
-        name: dparra0007/userapi-discovery:openshift
+        name: dparra0007/userapi-discovery:{{TAG_DISCOVERY}}
       generation: null
       importPolicy: {}
-      name: openshift
+      name: "{{TAG_DISCOVERY}}"
   status:
     dockerImageRepository: ""
 - apiVersion: v1
@@ -216,7 +243,7 @@ items:
           deploymentconfig: userapi-discovery
       spec:
         containers:
-        - image: dparra0007/userapi-discovery:openshift
+        - image: dparra0007/userapi-discovery:{{TAG_DISCOVERY}}
           name: userapi-discovery
           ports:
           - containerPort: 8761
@@ -230,7 +257,7 @@ items:
         - userapi-discovery
         from:
           kind: ImageStreamTag
-          name: userapi-discovery:openshift
+          name: userapi-discovery:{{TAG_DISCOVERY}}
       type: ImageChange
   status: {}
 - apiVersion: v1
