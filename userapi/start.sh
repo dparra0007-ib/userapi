@@ -1,10 +1,7 @@
 #!/bin/bash
 set -e  
 
-git clone $GLOBALCONF
-source $GLOBALCONFFILE
-
-git clone $SYSTEMCONF
-source $SYSTEMCONFFILE
+sleep 30
+source /usr/src/conf/.env
 
 exec npm start

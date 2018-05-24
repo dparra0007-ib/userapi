@@ -1,8 +1,7 @@
-version: '3'
+version: '2'
 services:
   userapi-apigateway:
-    build:
-      context: ./userapi-apigateway
+    image: dparra0007/userapi-apigateway:openshift
     environment:
       - SERVICE1=userapi
     ports:
@@ -10,19 +9,16 @@ services:
     depends_on:
       - userapi
   userapi-db:
-    build:
-      context: ./userapi-db
+    image: dparra0007/userapi-db:openshift
     ports:
       - 27017:27017
       - 28017:28017
   userapi-discovery:
-    build:
-      context: ./userapi-discovery
+    image: dparra0007/userapi-discovery:openshift
     ports:
       - 8761:8761
   userapi:
-    build:
-      context: ./userapi
+    image: dparra0007/userapi:openshift
     ports:
       - 3000:3000
     links:

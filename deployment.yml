@@ -1,0 +1,323 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    creationTimestamp: null
+    labels:
+      io.kompose.service: userapi-config-claim0
+    name: userapi-config-claim0
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 100Mi
+  status: {}
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    name: userapi
+  spec:
+    tags:
+    - annotations:
+        openshift.io/imported-from: dparra0007/userapi:{{TAG_SERVICE}}
+      from:
+        kind: DockerImage
+        name: dparra0007/userapi:{{TAG_SERVICE}}
+      generation: null
+      importPolicy: {}
+      name: "{{TAG_SERVICE}}"
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    name: dparra0007-config
+  spec:
+    tags:
+    - annotations:
+        openshift.io/imported-from: dparra0007/static-config:20180522-2
+      from:
+        kind: DockerImage
+        name: dparra0007/static-config:20180522-2
+      generation: null
+      importPolicy: {}
+      name: "20180522-2"
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    name: userapi
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: userapi
+    strategy:
+      resources: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          deploymentconfig: userapi
+      spec:
+        containers:
+        - image: dparra0007/userapi:{{TAG_SERVICE}}
+          name: userapi
+          ports:
+          - containerPort: 3000
+          resources: {}
+          volumeMounts:
+          - mountPath: /usr/src/conf
+            name: userapi-config-claim0
+        - image: dparra0007/static-config:20180522-2
+          name: dparra0007-config
+          env:
+          - name: GLOBALCONF
+            value: https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/master/env.sh
+          - name: SYSTEMCONF
+            value: https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/userapi/env.sh
+          volumeMounts:
+          - mountPath: /usr/src/app/conf
+            name: userapi-config-claim0
+        volumes:
+        - name: userapi-config-claim0
+          persistentVolumeClaim:
+            claimName: userapi-config-claim0
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - userapi
+        from:
+          kind: ImageStreamTag
+          name: userapi:{{TAG_SERVICE}}
+      type: ImageChange
+  status: {}
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    name: userapi-apigateway
+  spec:
+    tags:
+    - annotations:
+        openshift.io/imported-from: dparra0007/userapi-apigateway:{{TAG_APIGATEWAY}}
+      from:
+        kind: DockerImage
+        name: dparra0007/userapi-apigateway:{{TAG_APIGATEWAY}}
+      generation: null
+      importPolicy: {}
+      name: "{{TAG_APIGATEWAY}}"
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    name: userapi-apigateway
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: userapi-apigateway
+    strategy:
+      resources: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          deploymentconfig: userapi-apigateway
+      spec:
+        containers:
+        - env:
+          - name: SERVICE1
+            value: userapi
+          image: dparra0007/userapi-apigateway:{{TAG_APIGATEWAY}}
+          name: userapi-apigateway
+          ports:
+          - containerPort: 8080
+          resources: {}
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - userapi-apigateway
+        from:
+          kind: ImageStreamTag
+          name: userapi-apigateway:{{TAG_APIGATEWAY}}
+      type: ImageChange
+  status: {}
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    name: userapi-db
+  spec:
+    tags:
+    - annotations:
+        openshift.io/imported-from: dparra0007/userapi-db:{{TAG_DB}}
+      from:
+        kind: DockerImage
+        name: dparra0007/userapi-db:{{TAG_DB}}
+      generation: null
+      importPolicy: {}
+      name: "{{TAG_DB}}"
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    name: userapi-db
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: userapi-db
+    strategy:
+      resources: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          deploymentconfig: userapi-db
+      spec:
+        containers:
+        - image: dparra0007/userapi-db:{{TAG_DB}}
+          name: userapi-db
+          ports:
+          - containerPort: 27017
+          - containerPort: 28017
+          resources: {}
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - userapi-db
+        from:
+          kind: ImageStreamTag
+          name: userapi-db:{{TAG_DB}}
+      type: ImageChange
+  status: {}
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    name: userapi-discovery
+  spec:
+    tags:
+    - annotations:
+        openshift.io/imported-from: dparra0007/userapi-discovery:{{TAG_DISCOVERY}}
+      from:
+        kind: DockerImage
+        name: dparra0007/userapi-discovery:{{TAG_DISCOVERY}}
+      generation: null
+      importPolicy: {}
+      name: "{{TAG_DISCOVERY}}"
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    name: userapi-discovery
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: userapi-discovery
+    strategy:
+      resources: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          deploymentconfig: userapi-discovery
+      spec:
+        containers:
+        - image: dparra0007/userapi-discovery:{{TAG_DISCOVERY}}
+          name: userapi-discovery
+          ports:
+          - containerPort: 8761
+          resources: {}
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - userapi-discovery
+        from:
+          kind: ImageStreamTag
+          name: userapi-discovery:{{TAG_DISCOVERY}}
+      type: ImageChange
+  status: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    name: userapi
+  spec:
+    ports:
+    - name: 3000-tcp
+      port: 3000
+      targetPort: 3000
+    selector:
+      deploymentconfig: userapi
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    name: userapi-apigateway
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      targetPort: 8080
+    selector:
+      deploymentconfig: userapi-apigateway
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    name: userapi-db
+  spec:
+    ports:
+    - name: 27017-tcp
+      port: 27017
+      targetPort: 27017
+    - name: 28017-tcp
+      port: 28017
+      targetPort: 28017
+    selector:
+      deploymentconfig: userapi-db
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    name: userapi-discovery
+  spec:
+    ports:
+    - name: 8761-tcp
+      port: 8761
+      targetPort: 8761
+    selector:
+      deploymentconfig: userapi-discovery
+  status:
+    loadBalancer: {}
+kind: List
+metadata: {}

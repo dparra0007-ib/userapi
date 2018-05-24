@@ -9,6 +9,8 @@ stages:
 - build application
 - test application
 - push binaries
+- deploy application
+- regression test deploy
 
 variables:
   CONTAINER_SERVICE_IMAGE: dparra0007/userapi
@@ -117,6 +119,7 @@ functional_test_service:
   when: manual
   only:
     - master
+    - openshift
   except:
     - triggers
 
@@ -159,14 +162,15 @@ push_image_service:
     - docker exec anchore anchore analyze --image registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME
     - docker exec anchore anchore gate --image registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME
     - docker tag registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME $CONTAINER_SERVICE_IMAGE
-    - docker tag registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME $CONTAINER_SERVICE_IMAGE:$CI_PIPELINE_ID-$CI_JOB_ID
+    - docker tag registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME $CONTAINER_SERVICE_IMAGE:$CI_PIPELINE_ID
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
     - docker push $CONTAINER_SERVICE_IMAGE
-    - docker push $CONTAINER_SERVICE_IMAGE:$CI_PIPELINE_ID-$CI_JOB_ID
+    - docker push $CONTAINER_SERVICE_IMAGE:$CI_PIPELINE_ID
   environment:
     name: staging
   only:
     - master
+    - openshift
 
 push_image_discovery:
   stage: push binaries
@@ -180,14 +184,15 @@ push_image_discovery:
     - docker exec anchore anchore analyze --image registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME
     - docker exec anchore anchore gate --image registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME
     - docker tag registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME $CONTAINER_DISCOVERY_IMAGE
-    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME $CONTAINER_DISCOVERY_IMAGE:$CI_PIPELINE_ID-$CI_JOB_ID
+    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-discovery:$CI_COMMIT_REF_NAME $CONTAINER_DISCOVERY_IMAGE:$CI_PIPELINE_ID
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
     - docker push $CONTAINER_DISCOVERY_IMAGE
-    - docker push $CONTAINER_DISCOVERY_IMAGE:$CI_PIPELINE_ID-$CI_JOB_ID
+    - docker push $CONTAINER_DISCOVERY_IMAGE:$CI_PIPELINE_ID
   environment:
     name: staging
   only:
     - master
+    - openshift
 
 push_image_db:
   stage: push binaries
@@ -198,17 +203,16 @@ push_image_db:
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker pull registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME
-    - docker exec anchore anchore analyze --image registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME
-    - docker exec anchore anchore gate --image registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME
     - docker tag registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME $CONTAINER_DB_IMAGE
-    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME $CONTAINER_DB_IMAGE:$CI_PIPELINE_ID-$CI_JOB_ID
+    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME $CONTAINER_DB_IMAGE:$CI_PIPELINE_ID
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
     - docker push $CONTAINER_DB_IMAGE
-    - docker push $CONTAINER_DB_IMAGE:$CI_PIPELINE_ID-$CI_JOB_ID
+    - docker push $CONTAINER_DB_IMAGE:$CI_PIPELINE_ID
   environment:
     name: staging
   only:
     - master
+    - openshift
 
 push_image_apigateway:
   stage: push binaries
@@ -222,11 +226,48 @@ push_image_apigateway:
     - docker exec anchore anchore analyze --image registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME
     - docker exec anchore anchore gate --image registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME
     - docker tag registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME $CONTAINER_APIGATEWAY_IMAGE
-    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME $CONTAINER_APIGATEWAY_IMAGE:$CI_PIPELINE_ID-$CI_JOB_ID
+    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-apigateway:$CI_COMMIT_REF_NAME $CONTAINER_APIGATEWAY_IMAGE:$CI_PIPELINE_ID
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
     - docker push $CONTAINER_APIGATEWAY_IMAGE
-    - docker push $CONTAINER_APIGATEWAY_IMAGE:$CI_PIPELINE_ID-$CI_JOB_ID
+    - docker push $CONTAINER_APIGATEWAY_IMAGE:$CI_PIPELINE_ID
   environment:
     name: staging
   only:
     - master
+    - openshift
+
+deploy_staging:
+  stage: deploy application
+  variables:
+    OC_URL: $OC_URL
+    OC_TOKEN: $OC_TOKEN
+  before_script:
+    - sed -i -e "s/{{TAG_SERVICE}}/$CI_PIPELINE_ID/g" deployment.yml
+    - sed -i -e "s/{{TAG_APIGATEWAY}}/$CI_PIPELINE_ID/g" deployment.yml
+    - sed -i -e "s/{{TAG_DB}}/$CI_PIPELINE_ID/g" deployment.yml
+    - sed -i -e "s/{{TAG_DISCOVERY}}/$CI_PIPELINE_ID/g" deployment.yml
+    - oc login $OC_URL --token $OC_TOKEN --insecure-skip-tls-verify
+    - oc new-project $(echo $CI_PROJECT_NAME | tr '[:upper:]' '[:lower:]')
+  script:
+    - oc create --filename=deployment.yml
+    - oc expose service userapi-apigateway
+    - oc expose service userapi
+  environment:
+    name: production
+    url: http://userapi-apigateway-w53-userapi.apps.ocp-1.cloud.iairgroup.com/userapi/swagger.json
+  only:
+      - master
+      - openshift
+  except:
+    - triggers
+
+functional_regression_test_staging:
+  stage: regression test deploy
+  image: dparra0007/newman:20170712-4
+  script:
+    - newman run https://www.getpostman.com/collections/6d9fe4f1a0033de5a2af --reporters cli,json --reporter-json-export outputfile.json --environment https://api.getpostman.com/environments/651996-b6820a2c-0306-45c6-b5ab-1db91a8f727e?apikey=100822fe2bd7454eb916c8ebdd4be266
+  only:
+      - master
+      - openshift
+  except:
+    - triggers
