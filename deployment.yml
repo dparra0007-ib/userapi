@@ -74,10 +74,6 @@ items:
           volumeMounts:
           - mountPath: /usr/src/conf
             name: userapi-config-claim0
-        volumes:
-        - name: userapi-config-claim0
-          persistentVolumeClaim:
-            claimName: userapi-config-claim0
         - image: dparra0007/static-config:20180522-2
           name: dparra0007-config
           env:
@@ -88,6 +84,10 @@ items:
           volumeMounts:
           - mountPath: /usr/src/app/conf
             name: userapi-config-claim0
+        volumes:
+        - name: userapi-config-claim0
+          persistentVolumeClaim:
+            claimName: userapi-config-claim0
     test: false
     triggers:
     - type: ConfigChange
