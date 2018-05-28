@@ -1,10 +1,6 @@
 var express = require('express');
 var router = express.Router();
 
-process.env["NODE_CONFIG_DIR"] = "/usr/src/dynamic-conf/";
-var config = require('config');
-var extraMessage = config.get('Userapi.Extra.message');
-
 router.route('/users')
 
 .get(function(req, res) {
@@ -16,6 +12,9 @@ router.route('/users')
 })
 
 .post(function(req, res) {
+    if(req.param('clean') === 'true') delete require.cache[require.resolve('/usr/src/dynamic-conf/default.json')];
+    var config = require('/usr/src/dynamic-conf/default.json');
+    var extraMessage = config.Userapi.Extra.message;
     var db = req.db;
     var collection = db.get('userlist');
     collection.insert(req.body, function(err, result){
@@ -28,6 +27,9 @@ router.route('/users')
 router.route('/users/:id')
 
 .delete(function(req, res) {
+    if(req.param('clean') === 'true') delete require.cache[require.resolve('/usr/src/dynamic-conf/default.json')];
+    var config = require('/usr/src/dynamic-conf/default.json');
+    var extraMessage = config.Userapi.Extra.message;
     var db = req.db;
     var collection = db.get('userlist');
     var userToDelete = req.params.id;
