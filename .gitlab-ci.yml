@@ -119,7 +119,6 @@ functional_test_service:
   when: manual
   only:
     - master
-    - openshift
   except:
     - triggers
 
@@ -146,7 +145,6 @@ performance_test_service:
   when: manual
   only:
     - master
-    - openshift
   except:
     - triggers
 
@@ -170,7 +168,8 @@ push_image_service:
     name: staging
   only:
     - master
-    - openshift
+  except:
+    - triggers
 
 push_image_discovery:
   stage: push binaries
@@ -192,7 +191,8 @@ push_image_discovery:
     name: staging
   only:
     - master
-    - openshift
+  except:
+    - triggers
 
 push_image_db:
   stage: push binaries
@@ -212,7 +212,8 @@ push_image_db:
     name: staging
   only:
     - master
-    - openshift
+  except:
+    - triggers
 
 push_image_apigateway:
   stage: push binaries
@@ -234,7 +235,8 @@ push_image_apigateway:
     name: staging
   only:
     - master
-    - openshift
+  except:
+    - triggers
 
 deploy_staging:
   stage: deploy application
@@ -257,7 +259,6 @@ deploy_staging:
     url: http://userapi-apigateway-w53-userapi.apps.ocp-1.cloud.iairgroup.com/userapi/swagger.json
   only:
       - master
-      - openshift
   except:
     - triggers
 
@@ -268,6 +269,3 @@ functional_regression_test_staging:
     - newman run https://www.getpostman.com/collections/6d9fe4f1a0033de5a2af --reporters cli,json --reporter-json-export outputfile.json --environment https://api.getpostman.com/environments/651996-b6820a2c-0306-45c6-b5ab-1db91a8f727e?apikey=100822fe2bd7454eb916c8ebdd4be266
   only:
       - master
-      - openshift
-  except:
-    - triggers
