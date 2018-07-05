@@ -254,6 +254,9 @@ deploy_staging:
     - oc create --filename=deployment.yml
     - oc expose service userapi-apigateway
     - oc expose service userapi
+  artifacts:
+    paths:
+      - ./deployment.yml
   environment:
     name: production
     url: http://userapi-apigateway-w53-userapi.apps.ocp-1.cloud.iairgroup.com/userapi/swagger.json
