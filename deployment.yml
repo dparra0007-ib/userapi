@@ -15,6 +15,20 @@ items:
         storage: 100Mi
   status: {}
 - apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    creationTimestamp: null
+    labels:
+      io.kompose.service: userapi-dynamic-config-claim0
+    name: userapi-dynamic-config-claim0
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 100Mi
+  status: {}
+- apiVersion: v1
   kind: ImageStream
   metadata:
     creationTimestamp: null
@@ -49,6 +63,23 @@ items:
   status:
     dockerImageRepository: ""
 - apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    name: dparra0007-dynamic-config
+  spec:
+    tags:
+    - annotations:
+        openshift.io/imported-from: dparra0007/dynamic-config:nodejs-20180525-2
+      from:
+        kind: DockerImage
+        name: dparra0007/dynamic-config:nodejs-20180525-2
+      generation: null
+      importPolicy: {}
+      name: "20180525-2"
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
   kind: DeploymentConfig
   metadata:
     creationTimestamp: null
@@ -74,6 +105,8 @@ items:
           volumeMounts:
           - mountPath: /usr/src/conf
             name: userapi-config-claim0
+          - mountPath: /usr/src/dynamic-conf
+            name: userapi-dynamic-config-claim0
         - image: dparra0007/static-config:20180522-2
           name: dparra0007-config
           env:
@@ -84,10 +117,21 @@ items:
           volumeMounts:
           - mountPath: /usr/src/app/conf
             name: userapi-config-claim0
+        - image: dparra0007/dynamic-config:nodejs-20180525-2
+          name: dparra0007-dynamic-config
+          env:
+          - name: REMOTE_APPSETTINGS
+            value: https://raw.githubusercontent.com/dparra0007/W53-USERAPI-CONFIG/master/default.json
+          volumeMounts:
+          - mountPath: /opt/app-root/src/conf/
+            name: userapi-dynamic-config-claim0
         volumes:
         - name: userapi-config-claim0
           persistentVolumeClaim:
             claimName: userapi-config-claim0
+        - name: userapi-dynamic-config-claim0
+          persistentVolumeClaim:
+            claimName: userapi-dynamic-config-claim0
     test: false
     triggers:
     - type: ConfigChange
