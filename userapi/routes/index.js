@@ -12,7 +12,7 @@ router.route('/users')
 })
 
 .post(function(req, res) {
-    if(req.params.clean === 'true') delete require.cache[require.resolve('/usr/src/dynamic-conf/default.json')];
+    if(req.query['clean'] === 'true') delete require.cache[require.resolve('/usr/src/dynamic-conf/default.json')];
     var config = require('/usr/src/dynamic-conf/default.json');
     var extraMessage = config.Userapi.Extra.message;
     var db = req.db;
@@ -27,7 +27,7 @@ router.route('/users')
 router.route('/users/:id')
 
 .delete(function(req, res) {
-    if(req.params.clean === 'true') delete require.cache[require.resolve('/usr/src/dynamic-conf/default.json')];
+    if(req.query['clean'] === 'true') delete require.cache[require.resolve('/usr/src/dynamic-conf/default.json')];
     var config = require('/usr/src/dynamic-conf/default.json');
     var extraMessage = config.Userapi.Extra.message;
     var db = req.db;
