@@ -11,9 +11,9 @@ const eureka = new Eureka({
     app: 'userapi',
     hostName: 'userapi',
     ipAddr: '127.0.0.1',
-    statusPageUrl: 'http://userapi:5000',
+    statusPageUrl: 'http://userapi:3000',
     port: {
-      '$': 5000,
+      '$': 3000,
       '@enabled': 'true',
     },
     vipAddress: 'localhost',

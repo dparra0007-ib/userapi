@@ -5,16 +5,13 @@ RUN mkdir -p /usr/src/conf && \
     mkdir -p /usr/src/dynamic-conf &&\
     chown -R 1000:0 /usr/src/conf && chmod -R og+rwx /usr/src/dynamic-conf
 
-RUN apt-get update
-RUN apt-get install dos2unix
-
 ADD start.sh start.sh
 RUN chmod +x ./start.sh
-RUN dos2unix ./start.sh
 
 USER 1000
 
 ENTRYPOINT ["./start.sh"]
-CMD ["npm", "start"]
+CMD ["npm", "run", "debug"]
 
 EXPOSE 3000
+EXPOSE 5858

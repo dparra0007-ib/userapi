@@ -1,8 +1,7 @@
 version: '3'
 services:
   userapi-apigateway:
-    build:
-      context: ./userapi-apigateway
+    image: registry.gitlab.com/w53/w53-userapi/userapi-apigateway:${TAG}
     environment:
       - SERVICE1=userapi
     ports:
@@ -10,32 +9,21 @@ services:
     depends_on:
       - userapi
   userapi-db:
-    build:
-      context: ./userapi-db
+    image: registry.gitlab.com/w53/w53-userapi/userapi-db:${TAG}
     ports:
       - 27017:27017
       - 28017:28017
-  userapi-discovery:
-    build:
-      context: ./userapi-discovery
-    ports:
-      - 8761:8761
   userapi:
-    build:
-      context: ./userapi
+    image: registry.gitlab.com/w53/w53-userapi/userapi:${TAG}
     ports:
       - 3000:3000
     links:
       - userapi-db
-      - userapi-discovery
     depends_on: 
       - userapi-db
-      - userapi-discovery
       - userapi-config
-      - userapi-dynamic-config
     volumes:
       - ${PWD}/userapi-config:/usr/src/conf
-      - ${PWD}/userapi-dynamic-config:/usr/src/dynamic-conf
   userapi-config:
     image: dparra0007/static-config:20180522-2
     environment:
@@ -43,9 +31,10 @@ services:
       - SYSTEMCONF=https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/userapi/env.sh
     volumes:
       - ${PWD}/userapi-config:/usr/src/app/conf
-  userapi-dynamic-config:
-    image: dparra0007/dynamic-config:nodejs-20180525-2
-    environment:
-      - REMOTE_APPSETTINGS=https://raw.githubusercontent.com/dparra0007/W53-USERAPI-CONFIG/master/default.json
-    volumes:
-      - ${PWD}/userapi-dynamic-config:/opt/app-root/src/conf/
+  userapi-design-test:
+    build:
+      context: ./userapi-design-test
+    links:
+      - userapi
+    depends_on:
+      - userapi
