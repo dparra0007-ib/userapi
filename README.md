@@ -95,7 +95,7 @@ The core concepts of standard pipelines and specially the .gitlab-ci pipeline is
 
 In the concrete case of this application there are defined six stages:
 
-- build code. It's the stage where each service code is complied, with the added dependencies declared as part of them.
+- test code. The application code is unit and integration tested. Moreover, static analysis security tests are performed in this stage.
 - build application. In this stage, docker images are build putting the already compiled service code inside the docker image.
 - test application. Infrastructure and service code, all as part of the docker image that is the application is functional and performance tested. Moreover, in this stage, the API specification defined by the API First approach in initial process phase is validated/checked for definition compliance. There is no need for reserved enviroments for testing because the docker [excutor engine of Gitlab CI](https://docs.gitlab.com/runner/executors/docker.html) allows to run isolated tested enviroments defined by docker compose files like [docker-compose.design.test.yml](https://gitlab.com/W53/W53-USERAPI/blob/master/docker-compose.design.test.yml), [docker-compose.functional.test.yml](https://gitlab.com/W53/W53-USERAPI/blob/master/docker-compose.functional.test.yml) and [docker-compose.performance.test.yml](https://gitlab.com/W53/W53-USERAPI/blob/master/docker-compose.performance.test.yml) with docker images in it that can perform the desired kind of test. Further details will be commented n Testing section.
 - push binaries. All docker images being built and tested are versioned and pushed to production docker registry.
