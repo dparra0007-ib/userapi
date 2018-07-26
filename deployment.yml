@@ -180,8 +180,8 @@ items:
       spec:
         containers:
         - env:
-          - name: SERVICE1
-            value: userapi
+          - name: GLOBALCONF
+            value: https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/master/env.sh
           image: dparra0007/userapi-apigateway:{{TAG_APIGATEWAY}}
           name: userapi-apigateway
           ports:
