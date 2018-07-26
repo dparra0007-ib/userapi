@@ -83,9 +83,24 @@ System.setProperty("archaius.configurationSource.additionalUrls", "https://githu
 
 The application implements Logging & [Monitoring standards](https://teams.microsoft.com/l/entity/com.microsoft.teamspace.tab.wiki/tab%3a%3a6fe37660-8d95-449a-80b1-6eeb13a3c343?label=Monitoring+in+Wiki&context=%7b%0d%0a++%22subEntityId%22%3a+%22%7b%5c%22pageId%5c%22%3a2%2c%5c%22sectionId%5c%22%3anull%2c%5c%22origin%5c%22%3a2%7d%22%2c%0d%0a++%22canvasUrl%22%3a+%22https%3a%2f%2fteams.microsoft.com%2fl%2ftab%2f19%253a6239855bbac34516a2518de57c37c1ca%2540thread.skype%2ftab%253a%253a6fe37660-8d95-449a-80b1-6eeb13a3c343%3flabel%3dWiki%26tenantId%3dc28eb601-be1d-4918-89f4-0d1b73c2ddc5%22%2c%0d%0a++%22channelId%22%3a+%2219%3a6239855bbac34516a2518de57c37c1ca%40thread.skype%22%0d%0a%7d&tenantId=c28eb601-be1d-4918-89f4-0d1b73c2ddc5) based in indsutry standards and [Group IT application standards](https://teams.microsoft.com/l/entity/com.microsoft.teamspace.tab.wiki/tab%3a%3a6fe37660-8d95-449a-80b1-6eeb13a3c343?label=Application+Standards+in+Wiki&context=%7b%0d%0a++%22subEntityId%22%3a+%22%7b%5c%22pageId%5c%22%3a8%2c%5c%22sectionId%5c%22%3anull%2c%5c%22origin%5c%22%3a2%7d%22%2c%0d%0a++%22canvasUrl%22%3a+%22https%3a%2f%2fteams.microsoft.com%2fl%2ftab%2f19%253a6239855bbac34516a2518de57c37c1ca%2540thread.skype%2ftab%253a%253a6fe37660-8d95-449a-80b1-6eeb13a3c343%3flabel%3dWiki%26tenantId%3dc28eb601-be1d-4918-89f4-0d1b73c2ddc5%22%2c%0d%0a++%22channelId%22%3a+%2219%3a6239855bbac34516a2518de57c37c1ca%40thread.skype%22%0d%0a%7d&tenantId=c28eb601-be1d-4918-89f4-0d1b73c2ddc5).
 
-All servcies and resources send logs to standard output as event stream messages. The host environment define and implements the event conllector and re-send them to a final storage with an strcutured JSON format.
+All services and resources send logs to standard output as event stream messages. The host environment define and implements the event conllector and re-send them to a final storage with an strcutured JSON format.
 
-TODO: correlation id. Equivalent to spring boot sleuth
+The concrete implementation is based on [Bunyan](https://github.com/villadora/express-bunyan-logger) and [Zipkin](https://github.com/openzipkin/zipkin-js/tree/master/packages/zipkin-instrumentation-express) packages as explained [Logging & Monitoring Guidelines](https://teams.microsoft.com/l/entity/com.microsoft.teamspace.tab.wiki/tab%3a%3a6fe37660-8d95-449a-80b1-6eeb13a3c343?label=Guidelines+in+Wiki&context=%7b%0d%0a++%22subEntityId%22%3a+%22%7b%5c%22pageId%5c%22%3a2%2c%5c%22sectionId%5c%22%3a7%2c%5c%22origin%5c%22%3a2%7d%22%2c%0d%0a++%22canvasUrl%22%3a+%22https%3a%2f%2fteams.microsoft.com%2fl%2ftab%2f19%253a6239855bbac34516a2518de57c37c1ca%2540thread.skype%2ftab%253a%253a6fe37660-8d95-449a-80b1-6eeb13a3c343%3flabel%3dWiki%26tenantId%3dc28eb601-be1d-4918-89f4-0d1b73c2ddc5%22%2c%0d%0a++%22channelId%22%3a+%2219%3a6239855bbac34516a2518de57c37c1ca%40thread.skype%22%0d%0a%7d&tenantId=c28eb601-be1d-4918-89f4-0d1b73c2ddc5).
+For Bunyan, after the instance of bunyan function, the structure of the log is the standard one extended by including Zipkin traces in the red_id field with the fields X-B3-TraceId and X-B3-SpanId. This is done by set up the logger with:
+
+```
+app.use(require('express-bunyan-logger')({
+  genReqId: function(req) {
+     return tracer.id;
+  }
+}));
+```
+
+in [app.js](https://gitlab.com/W53/W53-USERAPI/blob/master/userapi/app.js).
+
+After that set up, the usage is very straight forward with just calling Bunyan log API: log.debug(), log.info(), log.warn(), ...
+
+Tracing is implemented with Zipkin as was mentioned and Trace Id and Span Id used in log for enabling distrinuted logging across services.
 
 ## Development Pipeline
 
