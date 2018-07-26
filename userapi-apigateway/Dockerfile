@@ -1,8 +1,11 @@
-FROM dparra0007/apigateway:20171014-1
+FROM dparra0007/apigateway:20180702-2
 
 COPY src/main/resources/ src/main/resources/
 
-RUN mvn install
+RUN mvn install -DskipTests
+
+ADD start.sh start.sh
+RUN chmod +x ./start.sh
 
 USER 1001
 
@@ -10,4 +13,4 @@ CMD ["mvn package"]
 
 EXPOSE 8080
 
-ENTRYPOINT ["java","-jar","target/api-gateway-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["./start.sh"]

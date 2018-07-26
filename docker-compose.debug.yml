@@ -4,7 +4,7 @@ services:
     build:
       context: ./userapi-apigateway
     environment:
-      - SERVICE1=userapi
+      - GLOBALCONF=https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/master/env.sh
     ports:
       - 8080:8080
     depends_on:
