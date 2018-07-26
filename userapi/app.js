@@ -28,9 +28,28 @@ app.use(zipkinMiddleware({tracer}));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(require('express-bunyan-logger')());
+//logger
+app.use(require('express-bunyan-logger')({
+  genReqId: function(req) {
+     return tracer.id;
+  }
+}));
+/*var log = bunyan.createLogger({
+  name: 'userapi',
+  serializers: { // add serializers for req, res and err
+      req: bunyan.stdSerializers.req,
+      req: bunyan.stdSerializers.res,
+      err: bunyan.stdSerializers.err
+  },
+  'X-B3-TraceId': tracer.id,
+  'X-B3-SpanId': tracer.id
+});
+var express_logger = log.child({type: 'express', key: value});
+
+app.use(require('express-bunyan-logger')({
+  logger: express_logger
+}));*/
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
