@@ -18,6 +18,12 @@
     "mongodb": "^2.2.26",
     "monk": "^4.0.0",
     "pg-promise": "^3.2.3",
-    "serve-favicon": "~2.3.0"
+    "serve-favicon": "~2.3.0",
+    "zipkin": "^0.11.1",
+    "zipkin-context-cls": "^0.11.0",
+    "zipkin-instrumentation-cujojs-rest": "^0.11.1",
+    "zipkin-instrumentation-express": "^0.11.1",
+    "zipkin-instrumentation-fetch": "^0.11.1",
+    "zipkin-transport-http": "^0.11.1"
   }
 }

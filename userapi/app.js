@@ -1,4 +1,12 @@
 var express = require('express');
+
+const CLSContext = require('zipkin-context-cls');
+const {Tracer} = require('zipkin');
+const {recorder} = require('./recorder');
+const ctxImpl = new CLSContext('zipkin');
+const localServiceName = 'userapi';
+const tracer = new Tracer({ctxImpl, recorder, localServiceName});
+
 var path = require('path');
 var favicon = require('serve-favicon');
 var cookieParser = require('cookie-parser');
@@ -11,6 +19,10 @@ var db = monk('userapi-db:27017/nodetest2');
 var routes = require('./routes/index');
 
 var app = express();
+
+// instrument the server
+const zipkinMiddleware = require('zipkin-instrumentation-express').expressMiddleware;
+app.use(zipkinMiddleware({tracer}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
