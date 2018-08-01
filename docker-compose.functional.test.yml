@@ -1,20 +1,26 @@
 version: '3'
 services:
   userapi-apigateway:
-    image: registry.gitlab.com/w53/w53-userapi/userapi-apigateway:${TAG}
+    #image: registry.gitlab.com/w53/w53-userapi/userapi-apigateway:${TAG}
+    build:
+      context: ./userapi-apigateway
     environment:
-      - GLOBALCONF=https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/master/env.sh
+      - GLOBALCONF=https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/ci/env.sh
     ports:
       - 8080:8080
     depends_on:
       - userapi
   userapi-db:
-    image: registry.gitlab.com/w53/w53-userapi/userapi-db:${TAG}
+    #image: registry.gitlab.com/w53/w53-userapi/userapi-db:${TAG}
+    build:
+      context: ./userapi-db
     ports:
       - 27017:27017
       - 28017:28017
   userapi:
-    image: registry.gitlab.com/w53/w53-userapi/userapi:${TAG}
+    #image: registry.gitlab.com/w53/w53-userapi/userapi:${TAG}
+    build:
+      context: ./userapi/
     ports:
       - 3000:3000
     links:
@@ -22,15 +28,23 @@ services:
     depends_on: 
       - userapi-db
       - userapi-config
+      - userapi-dynamic-config
     volumes:
       - ${PWD}/userapi-config:/usr/src/conf
+      - ${PWD}/userapi-dynamic-config:/usr/src/dynamic-conf
   userapi-config:
     image: dparra0007/static-config:20180522-2
     environment:
-      - GLOBALCONF=https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/master/env.sh
-      - SYSTEMCONF=https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/userapi/env.sh
+      - GLOBALCONF=https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/ci/env.sh
+      - SYSTEMCONF=https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/userapi-ci/env.sh
     volumes:
       - ${PWD}/userapi-config:/usr/src/app/conf
+  userapi-dynamic-config:
+    image: dparra0007/dynamic-config:nodejs-20180525-2
+    environment:
+      - REMOTE_APPSETTINGS=https://raw.githubusercontent.com/dparra0007/W53-USERAPI-CONFIG/ci/default.json
+    volumes:
+      - ${PWD}/userapi-dynamic-config:/opt/app-root/src/conf/
   userapi-functional-test:
     build:
       context: ./userapi-functional-test
