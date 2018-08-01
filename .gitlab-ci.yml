@@ -257,7 +257,7 @@ deploy_staging:
   except:
     - triggers
 
-  deploy_production:
+deploy_production:
   stage: deploy application
   variables:
     OC_URL: $OC_URL_PRO
