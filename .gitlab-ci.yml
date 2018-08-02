@@ -233,15 +233,15 @@ push_image_apigateway:
 deploy_staging:
   stage: deploy application
   variables:
-    OC_URL: $OC_URL
-    OC_TOKEN: $OC_TOKEN
+    OC_URL: $OC_URL_STG
+    OC_TOKEN: $OC_TOKEN_STG
   before_script:
     - sed -i -e "s/{{TAG_SERVICE}}/$CI_PIPELINE_ID/g" deployment.yml
     - sed -i -e "s/{{TAG_APIGATEWAY}}/$CI_PIPELINE_ID/g" deployment.yml
     - sed -i -e "s/{{TAG_DB}}/$CI_PIPELINE_ID/g" deployment.yml
     - sed -i -e "s/{{TAG_DISCOVERY}}/$CI_PIPELINE_ID/g" deployment.yml
-    - oc login $OC_URL --token $OC_TOKEN --insecure-skip-tls-verify
-    - oc new-project $(echo $CI_PROJECT_NAME | tr '[:upper:]' '[:lower:]')
+    - oc login $OC_URL_STG --token $OC_TOKEN_STG --insecure-skip-tls-verify
+    - oc project ocp01-greetingapi-stg
   script:
     - oc create --filename=deployment.yml
     - oc expose service userapi-apigateway
@@ -251,7 +251,7 @@ deploy_staging:
       - ./deployment.yml
   environment:
     name: staging
-    url: http://userapi-apigateway-w53-userapi.dit-iaggs.com/userapi/1.0/users
+    url: http://userapi-apigateway-ocp01-greetingapi-stg.apps.ocp01.hcp.iairgroup.com/userapi/1.0/users
   only:
       - master
   except:
@@ -267,7 +267,7 @@ deploy_production:
     - sed -i -e "s/{{TAG_APIGATEWAY}}/$CI_PIPELINE_ID/g" deployment.yml
     - sed -i -e "s/{{TAG_DB}}/$CI_PIPELINE_ID/g" deployment.yml
     - sed -i -e "s/{{TAG_DISCOVERY}}/$CI_PIPELINE_ID/g" deployment.yml
-    - oc login $OC_URL --token $OC_TOKEN --insecure-skip-tls-verify
+    - oc login $OC_URL_PRO --token $OC_TOKEN_PRO --insecure-skip-tls-verify
     - oc new-project $(echo $CI_PROJECT_NAME | tr '[:upper:]' '[:lower:]')
   script:
     - oc create --filename=deployment.yml
@@ -289,6 +289,16 @@ functional_regression_test_staging:
   stage: regression test deploy
   image: dparra0007/newman:20170712-4
   script:
+    - newman run https://www.getpostman.com/collections/6d9fe4f1a0033de5a2af --reporters cli,json --reporter-json-export outputfile.json --environment https://api.getpostman.com/environments/651996-f4ff0aa5-3c70-edbe-ddb1-d81231001eb4?apikey=100822fe2bd7454eb916c8ebdd4be266
+  when: manual
+  only:
+      - master
+
+functional_regression_test_production:
+  stage: regression test deploy
+  image: dparra0007/newman:20170712-4
+  script:
     - newman run https://www.getpostman.com/collections/6d9fe4f1a0033de5a2af --reporters cli,json --reporter-json-export outputfile.json --environment https://api.getpostman.com/environments/651996-b6820a2c-0306-45c6-b5ab-1db91a8f727e?apikey=100822fe2bd7454eb916c8ebdd4be266
+  when: manual
   only:
       - master
