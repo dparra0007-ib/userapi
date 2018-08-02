@@ -111,9 +111,9 @@ items:
           name: dparra0007-config
           env:
           - name: GLOBALCONF
-            value: https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/master/env.sh
+            value: {{TAG_GLOBALCONF}}
           - name: SYSTEMCONF
-            value: https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/userapi/env.sh
+            value: {{TAG_SYSTEMCONF}}
           volumeMounts:
           - mountPath: /usr/src/app/conf
             name: userapi-config-claim0
@@ -121,7 +121,7 @@ items:
           name: dparra0007-dynamic-config
           env:
           - name: REMOTE_APPSETTINGS
-            value: https://raw.githubusercontent.com/dparra0007/W53-USERAPI-CONFIG/master/default.json
+            value: {{REMOTE_APPSETTINGS}}
           volumeMounts:
           - mountPath: /opt/app-root/src/conf/
             name: userapi-dynamic-config-claim0
@@ -181,7 +181,7 @@ items:
         containers:
         - env:
           - name: GLOBALCONF
-            value: https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/master/env.sh
+            value: {{TAG_GLOBALCONF}}
           image: dparra0007/userapi-apigateway:{{TAG_APIGATEWAY}}
           name: userapi-apigateway
           ports:

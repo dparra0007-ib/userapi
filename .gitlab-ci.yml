@@ -235,11 +235,17 @@ deploy_staging:
   variables:
     OC_URL: $OC_URL_STG
     OC_TOKEN: $OC_TOKEN_STG
+    TAG_GLOBALCONF: "https:\/\/raw.githubusercontent.com\/dparra0007\/W53-STATIC-CONFIG-SETTINGS\/stg\/env.sh"
+    TAG_SYSTEMCONF: "https:\/\/raw.githubusercontent.com\/dparra0007\/W53-STATIC-CONFIG-SETTINGS\/userapi-stg\/env.sh"
+    REMOTE_APPSETTINGS: "https:\/\/raw.githubusercontent.com\/dparra0007\/W53-USERAPI-CONFIG\/stg\/default.json"
   before_script:
     - sed -i -e "s/{{TAG_SERVICE}}/$CI_PIPELINE_ID/g" deployment.yml
     - sed -i -e "s/{{TAG_APIGATEWAY}}/$CI_PIPELINE_ID/g" deployment.yml
     - sed -i -e "s/{{TAG_DB}}/$CI_PIPELINE_ID/g" deployment.yml
     - sed -i -e "s/{{TAG_DISCOVERY}}/$CI_PIPELINE_ID/g" deployment.yml
+    - sed -i -e "s/{{TAG_GLOBALCONF}}/$TAG_GLOBALCONF/g" deployment.yml
+    - sed -i -e "s/{{TAG_SYSTEMCONF}}/$TAG_SYSTEMCONF/g" deployment.yml
+    - sed -i -e "s/{{REMOTE_APPSETTINGS}}/$REMOTE_APPSETTINGS/g" deployment.yml
     - oc login $OC_URL_STG --token $OC_TOKEN_STG --insecure-skip-tls-verify
     - oc project ocp01-greetingapi-stg
   script:
@@ -262,11 +268,17 @@ deploy_production:
   variables:
     OC_URL: $OC_URL_PRO
     OC_TOKEN: $OC_TOKEN_PRO
+    TAG_GLOBALCONF: "https:\/\/raw.githubusercontent.com\/dparra0007\/W53-STATIC-CONFIG-SETTINGS\/master\/env.sh"
+    TAG_SYSTEMCONF: "https:\/\/raw.githubusercontent.com\/dparra0007\/W53-STATIC-CONFIG-SETTINGS\/userapi\/env.sh"
+    REMOTE_APPSETTINGS: "https:\/\/raw.githubusercontent.com\/dparra0007\/W53-USERAPI-CONFIG\/master\/default.json"
   before_script:
     - sed -i -e "s/{{TAG_SERVICE}}/$CI_PIPELINE_ID/g" deployment.yml
     - sed -i -e "s/{{TAG_APIGATEWAY}}/$CI_PIPELINE_ID/g" deployment.yml
     - sed -i -e "s/{{TAG_DB}}/$CI_PIPELINE_ID/g" deployment.yml
     - sed -i -e "s/{{TAG_DISCOVERY}}/$CI_PIPELINE_ID/g" deployment.yml
+    - sed -i -e "s/{{TAG_GLOBALCONF}}/$TAG_GLOBALCONF/g" deployment.yml
+    - sed -i -e "s/{{TAG_SYSTEMCONF}}/$TAG_SYSTEMCONF/g" deployment.yml
+    - sed -i -e "s/{{REMOTE_APPSETTINGS}}/$REMOTE_APPSETTINGS/g" deployment.yml
     - oc login $OC_URL_PRO --token $OC_TOKEN_PRO --insecure-skip-tls-verify
     - oc new-project $(echo $CI_PROJECT_NAME | tr '[:upper:]' '[:lower:]')
   script:
@@ -290,7 +302,6 @@ functional_regression_test_staging:
   image: dparra0007/newman:20170712-4
   script:
     - newman run https://www.getpostman.com/collections/6d9fe4f1a0033de5a2af --reporters cli,json --reporter-json-export outputfile.json --environment https://api.getpostman.com/environments/651996-f4ff0aa5-3c70-edbe-ddb1-d81231001eb4?apikey=100822fe2bd7454eb916c8ebdd4be266
-  when: manual
   only:
       - master
 
