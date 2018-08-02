@@ -110,7 +110,7 @@ functional_test_service:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - export TAG=$CI_COMMIT_REF_NAME 
     - docker-compose -f docker-compose.functional.test.yml up -d
-    - sleep 30s
+    - sleep 90s
     - docker logs $(docker ps -a --filter ancestor=dparra0007/newman:20170712-4 --format "{{.ID}}")
   after_script:
     - docker stop $(docker ps -a --filter status=running --format "{{.ID}}") > /dev/null
