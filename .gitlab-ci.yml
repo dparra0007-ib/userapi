@@ -247,7 +247,7 @@ deploy_staging:
     - sed -i -e "s/{{TAG_SYSTEMCONF}}/$TAG_SYSTEMCONF/g" deployment.yml
     - sed -i -e "s/{{REMOTE_APPSETTINGS}}/$REMOTE_APPSETTINGS/g" deployment.yml
     - oc login $OC_URL_STG --token $OC_TOKEN_STG --insecure-skip-tls-verify
-    - oc project ocp01-greetingapi-stg
+    - oc project ocp01-userapi-stg
   script:
     - oc create --filename=deployment.yml
     - oc expose service userapi-apigateway
@@ -257,7 +257,7 @@ deploy_staging:
       - ./deployment.yml
   environment:
     name: staging
-    url: http://userapi-apigateway-ocp01-greetingapi-stg.apps.ocp01.hcp.iairgroup.com/userapi/1.0/users
+    url: http://userapi-apigateway-ocp01-userapi-stg.apps.ocp01.hcp.iairgroup.com/userapi/1.0/users
   only:
       - master
   except:
