@@ -228,5 +228,73 @@ items:
       deploymentconfig: userapi-db
   status:
     loadBalancer: {}
+
+- apiVersion: networking.istio.io/v1alpha3
+  kind: Gateway
+  metadata:
+    name: userapi-gateway
+  spec:
+    selector:
+      istio: ingressgateway # use istio default controller
+    servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+      - "*"
+- apiVersion: networking.istio.io/v1alpha3
+  kind: VirtualService
+  metadata:
+    name: userapi-route
+    namespace: w53-userapi
+  spec:
+    hosts:
+    - userapi
+    gateways:
+    - userapi-gateway
+    http:
+    - match:
+      - uri:
+          prefix: /1.0/greeting/
+      route:
+      - destination:
+          host: userapi
+          port:
+            number: 9000
+
+- apiVersion: networking.istio.io/v1alpha3
+  kind: ServiceEntry
+  metadata:
+    name: githubusercontent
+  spec:
+    hosts:
+    - raw.githubusercontent.com
+    ports:
+    - number: 443
+      name: https
+      protocol: HTTPS
+    resolution: DNS
+    location: MESH_EXTERNAL
+
+- apiVersion: networking.istio.io/v1alpha3
+  kind: VirtualService
+  metadata:
+    name: githubusercontent
+  spec:
+    hosts:
+    - raw.githubusercontent.com
+    tls:
+    - match:
+      - port: 443
+        sni_hosts:
+        - raw.githubusercontent.com
+      route:
+      - destination:
+          host: raw.githubusercontent.com
+          port:
+            number: 443
+        weight: 100
+
 kind: List
 metadata: {}

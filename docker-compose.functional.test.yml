@@ -1,15 +1,5 @@
 version: '3'
 services:
-  userapi-apigateway:
-    #image: registry.gitlab.com/w53/w53-userapi/userapi-apigateway:${TAG}
-    build:
-      context: ./userapi-apigateway
-    environment:
-      - GLOBALCONF=https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/ci/env.sh
-    ports:
-      - 8080:8080
-    depends_on:
-      - userapi
   userapi-db:
     #image: registry.gitlab.com/w53/w53-userapi/userapi-db:${TAG}
     build:

@@ -1,25 +1,11 @@
 version: '3'
 services:
-  userapi-apigateway:
-    build:
-      context: ./userapi-apigateway
-    environment:
-      - GLOBALCONF=https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/master/env.sh
-    ports:
-      - 8080:8080
-    depends_on:
-      - userapi
   userapi-db:
     build:
       context: ./userapi-db
     ports:
       - 27017:27017
       - 28017:28017
-  userapi-discovery:
-    build:
-      context: ./userapi-discovery
-    ports:
-      - 8761:8761
   userapi:
     build:
       context: ./userapi
@@ -27,10 +13,8 @@ services:
       - 3000:3000
     links:
       - userapi-db
-      - userapi-discovery
     depends_on: 
       - userapi-db
-      - userapi-discovery
       - userapi-config
       - userapi-dynamic-config
     volumes:

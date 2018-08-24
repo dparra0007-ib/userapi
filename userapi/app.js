@@ -1,11 +1,10 @@
 var express = require('express');
 
 const CLSContext = require('zipkin-context-cls');
-const {Tracer} = require('zipkin');
-const {recorder} = require('./recorder');
+const zipkin = require('zipkin');
 const ctxImpl = new CLSContext('zipkin');
 const localServiceName = 'userapi';
-const tracer = new Tracer({ctxImpl, recorder, localServiceName});
+const tracer = new zipkin.Tracer({ctxImpl, recorder: new zipkin.ConsoleRecorder(), localServiceName});
 
 var path = require('path');
 var favicon = require('serve-favicon');

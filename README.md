@@ -22,10 +22,6 @@ The application is the result of the aggregation of four microservices:
 
 - userapi-db. It's the database to persists the list of users. The database is hosted in a docker container based on mongodb ephimeral base image.
 
-- userapi-discovery. It's a discovery service to register and recover web services endpoints by name. It's an implementation of a common characteristic of microservices to uncouple client services from services endpoint because the nature of containers is to have short living durability and they can burst down and up continuously and chaging the ip of the endpoint. This concrete implementation is done with Netflix Eureka and stores the registry of the greetingapi service.
-
-- userapi-apigateway. It's an edge service to expose externally public endpoints for the services that are poart of the application. In this concrete case, there is only one single service greetingapi and it's the only one to be expose. The edge service implements one proxy capability by adding routing, and it's the point to add some more like authentication/authorization, header transformation, ...
-
 These all three services, and the database resource, are the basic implementation of the application functionality with a microservice architecture style, allowing independent deployment models for each one.
 
 ### Wider Technical Context
@@ -100,7 +96,7 @@ in [app.js](https://gitlab.com/W53/W53-USERAPI/blob/master/userapi/app.js).
 
 After that set up, the usage is very straight forward with just calling Bunyan log API: log.debug(), log.info(), log.warn(), ...
 
-Tracing is implemented with Zipkin as was mentioned and Trace Id and Span Id used in log for enabling distrinuted logging across services.
+To have [Zipkin](https://github.com/openzipkin/zipkin-js/tree/master/packages/zipkin-instrumentation-express) as dependency package it's just because the need to pass Openstracing http headers between requests. It could be done by custom code, but it's easier to let Zipkin to manage http headers for Opentracing, although there are not any endpoint configured for Zipkin to send traces, because it's the platform who owns that responsability.
 
 ## Development Pipeline
 
