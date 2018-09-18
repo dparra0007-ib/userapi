@@ -60,7 +60,7 @@ app.use(function(req,res,next){
     next();
 });
 
-app.use('/1.0', routes);
+app.use('/userapi/1.0', routes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
