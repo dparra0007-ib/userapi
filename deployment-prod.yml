@@ -7,7 +7,7 @@ metadata:
 spec:
   ports:
   - name: http
-    port: 9000
+    port: 3000
   selector:
     app: userapi
 
@@ -133,13 +133,13 @@ spec:
         - mountPath: /usr/src/app/conf
           name: userapi-config-claim0
       - image: dparra0007/dynamic-config:nodejs-20180525-2
-          name: dparra0007-dynamic-config
-          env:
-          - name: REMOTE_APPSETTINGS
-            value: {{REMOTE_APPSETTINGS}}
-          volumeMounts:
-          - mountPath: /opt/app-root/src/conf/
-            name: userapi-dynamic-config-claim0
+        name: dparra0007-dynamic-config
+        env:
+        - name: REMOTE_APPSETTINGS
+          value: {{REMOTE_APPSETTINGS}}
+        volumeMounts:
+        - mountPath: /opt/app-root/src/conf/
+          name: userapi-dynamic-config-claim0
       - image: dparra0007/userapi:{{TAG_SERVICE}}
         name: userapi
         resources:
@@ -151,19 +151,19 @@ spec:
             memory: "2Gi"
         imagePullPolicy: IfNotPresent #Always
         ports:
-        - containerPort: 9000
+        - containerPort: 3000
         volumeMounts:
         - mountPath: /usr/src/conf
           name: userapi-config-claim0
         - mountPath: /usr/src/dynamic-conf
-            name: userapi-dynamic-config-claim0
+          name: userapi-dynamic-config-claim0
       volumes:
       - name: userapi-config-claim0
         persistentVolumeClaim:
           claimName: userapi-config-claim0
       - name: userapi-dynamic-config-claim0
-          persistentVolumeClaim:
-            claimName: userapi-dynamic-config-claim0
+        persistentVolumeClaim:
+          claimName: userapi-dynamic-config-claim0
 
 ---
 
@@ -201,7 +201,7 @@ spec:
     - destination:
         host: userapi
         port:
-          number: 9000
+          number: 3000
 
 ---
 
