@@ -198,6 +198,7 @@ deploy_staging:
 
 deploy_production:
   stage: deploy application
+  image: dparra0007/docker:20180917-2
   variables:
     OC_URL: $OC_URL_PRO
     OC_TOKEN: $OC_TOKEN_PRO
@@ -205,22 +206,25 @@ deploy_production:
     TAG_SYSTEMCONF: 'https:\/\/raw.githubusercontent.com\/dparra0007\/W53-STATIC-CONFIG-SETTINGS\/userapi\/env.sh'
     REMOTE_APPSETTINGS: 'https:\/\/raw.githubusercontent.com\/dparra0007\/W53-USERAPI-CONFIG\/master\/default.json'
   before_script:
-    - sed -i -e "s/{{TAG_SERVICE}}/$CI_PIPELINE_ID/g" deployment.yml
-    - sed -i -e "s/{{TAG_DB}}/$CI_PIPELINE_ID/g" deployment.yml
-    - sed -i -e "s/{{TAG_GLOBALCONF}}/$TAG_GLOBALCONF/g" deployment.yml
-    - sed -i -e "s/{{TAG_SYSTEMCONF}}/$TAG_SYSTEMCONF/g" deployment.yml
-    - sed -i -e "s/{{REMOTE_APPSETTINGS}}/$REMOTE_APPSETTINGS/g" deployment.yml
+    - sed -i -e "s/{{TAG_SERVICE}}/$CI_PIPELINE_ID/g" deployment-prod.yml
+    - sed -i -e "s/{{TAG_DB}}/$CI_PIPELINE_ID/g" deployment-prod.yml
+    - sed -i -e "s/{{TAG_GLOBALCONF}}/$TAG_GLOBALCONF/g" deployment-prod.yml
+    - sed -i -e "s/{{TAG_SYSTEMCONF}}/$TAG_SYSTEMCONF/g" deployment-prod.yml
+    - sed -i -e "s/{{REMOTE_APPSETTINGS}}/$REMOTE_APPSETTINGS/g" deployment-prod.yml
     - oc login $OC_URL_PRO --token $OC_TOKEN_PRO --insecure-skip-tls-verify
     - oc new-project $(echo $CI_PROJECT_NAME | tr '[:upper:]' '[:lower:]')
     - oc adm policy add-scc-to-user privileged -z default -n $(echo $CI_PROJECT_NAME | tr '[:upper:]' '[:lower:]')
   script:
-    - oc apply -f <(istioctl kube-inject -f deployment-prod.yml)
+    - istioctl kube-inject -f deployment-prod.yml -o deployment-with-istio.yml
+    #- oc delete -f deployment-with-istio.yml
+    - oc apply -f deployment-with-istio.yml
   artifacts:
     paths:
       - ./deployment-prod.yml
+      - ./deployment-with-istio.yml
   environment:
     name: production
-    url: http://userapi-w53-userapi.dit-iaggs.com/userapi/1.0/users
+    url: http://istio-ingressgateway-istio-system.dit-iaggs.com/userapi/1.0/users
   when: manual
   only:
       - master
