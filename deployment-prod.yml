@@ -49,7 +49,6 @@ spec:
   resources:
     requests:
       storage: 100Mi
-status: {}
 
 apiVersion: v1
 kind: PersistentVolumeClaim
