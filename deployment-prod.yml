@@ -50,6 +50,8 @@ spec:
     requests:
       storage: 100Mi
 
+---
+
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
