@@ -8,7 +8,7 @@ RUN mkdir -p /usr/src/conf && \
 ADD start.sh start.sh
 RUN chmod +x ./start.sh
 
-USER 1001
+USER 1000
 
 ENTRYPOINT ["./start.sh"]
 CMD ["npm", "start"]
