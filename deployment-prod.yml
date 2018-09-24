@@ -105,7 +105,7 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: userapi-v1
+  name: userapi
 spec:
   replicas: 1
   template:
@@ -133,7 +133,7 @@ spec:
         volumeMounts:
         - mountPath: /usr/src/app/conf
           name: userapi-config-claim0
-      - image: dparra0007/dynamic-config:nodejs-20180525-2
+      - image: dparra0007/dynamic-config:nodejs-20180924-1
         name: dparra0007-dynamic-config
         env:
         - name: REMOTE_APPSETTINGS
