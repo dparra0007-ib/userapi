@@ -218,13 +218,14 @@ deploy_production:
     - istioctl kube-inject -f deployment-prod.yml -o deployment-with-istio.yml
     #- oc delete -f deployment-with-istio.yml
     - oc apply -f deployment-with-istio.yml
+    - oc expose service userapi
   artifacts:
     paths:
       - ./deployment-prod.yml
       - ./deployment-with-istio.yml
   environment:
     name: production
-    url: http://istio-ingressgateway-istio-system.dit-iaggs.com/userapi/1.0/users
+    url: http://userapi-w53-userapi.dit-iaggs.com/userapi/1.0/users/
   when: manual
   only:
       - master
