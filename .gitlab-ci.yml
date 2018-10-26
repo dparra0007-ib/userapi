@@ -98,7 +98,7 @@ validate_api_description:
     - export TAG=$CI_COMMIT_REF_NAME 
     - docker-compose -f docker-compose.design.test.yml up -d
     - sleep 90s
-    - docker logs $(docker ps -a --filter "name= w53userapi_userapi-design-test_1" --format "{{.ID}}")
+    - docker logs $(docker ps -a --filter "name=w53userapi_userapi-design-test_1" --format "{{.ID}}")
   after_script:
     - docker stop $(docker ps -a --filter status=running --format "{{.ID}}") > /dev/null
     - docker rm $(docker ps -a -q) -f > /dev/null
