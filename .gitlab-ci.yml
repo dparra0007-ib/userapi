@@ -18,7 +18,7 @@ variables:
   IMAGE_DB_NAME: userapi-db
   URL_IB_REGISTRY: https://iaghcp.jfrog.io/iaghcp/api/docker/docker-ib/v2/$IMAGE_NAME
   TECH_ARCH_REGISTRY: iaghcp-docker-technical-architecture.jfrog.io
-  IB_REGISTRY: iaghcp-docker-ba.jfrog.io
+  IB_REGISTRY: iaghcp-docker-ib.jfrog.io
   CONTAINER_SERVICE_IMAGE: $IB_REGISTRY/userapi/$IMAGE_NAME
   CONTAINER_DB_IMAGE: $IB_REGISTRY/userapi/$IMAGE_DB_NAME
   BUILD_NAME: $CI_PROJECT_NAME
