@@ -17,12 +17,18 @@ services:
     volumes:
       - ${PWD}/userapi-config:/usr/src/conf
   userapi-config:
-    image: dparra0007/static-config:20180522-2
+    image: iaghcp-docker-technical-architecture.jfrog.io/static-config:1.0.0
     environment:
       - GLOBALCONF=https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/master/env.sh
       - SYSTEMCONF=https://raw.githubusercontent.com/dparra0007/W53-STATIC-CONFIG-SETTINGS/userapi/env.sh
     volumes:
       - ${PWD}/userapi-config:/usr/src/app/conf
+  userapi-dynamic-config:
+    image: iaghcp-docker-technical-architecture.jfrog.io/dynamic-config:1.0.0
+    environment:
+      - REMOTE_APPSETTINGS=https://raw.githubusercontent.com/dparra0007/W53-USERAPI-CONFIG/ci/default.json
+    volumes:
+      - ${PWD}/userapi-dynamic-config:/opt/app-root/src/conf/
   userapi-performance-test:
     build:
       context: ./userapi-performance-test

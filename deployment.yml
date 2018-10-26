@@ -53,13 +53,13 @@ items:
   spec:
     tags:
     - annotations:
-        openshift.io/imported-from: dparra0007/static-config:20180522-2
+        openshift.io/imported-from: iaghcp-docker-technical-architecture.jfrog.io/static-config:1.0.0
       from:
         kind: DockerImage
-        name: dparra0007/static-config:20180522-2
+        name: iaghcp-docker-technical-architecture.jfrog.io/static-config:1.0.0
       generation: null
       importPolicy: {}
-      name: "20180522-2"
+      name: "1.0.0"
   status:
     dockerImageRepository: ""
 - apiVersion: v1
@@ -70,13 +70,13 @@ items:
   spec:
     tags:
     - annotations:
-        openshift.io/imported-from: dparra0007/dynamic-config:nodejs-20180525-2
+        openshift.io/imported-from: iaghcp-docker-technical-architecture.jfrog.io/dynamic-config:1.0.0
       from:
         kind: DockerImage
-        name: dparra0007/dynamic-config:nodejs-20180525-2
+        name: iaghcp-docker-technical-architecture.jfrog.io/dynamic-config:1.0.0
       generation: null
       importPolicy: {}
-      name: "20180525-2"
+      name: "1.0.0"
   status:
     dockerImageRepository: ""
 - apiVersion: v1
@@ -107,7 +107,7 @@ items:
             name: userapi-config-claim0
           - mountPath: /usr/src/dynamic-conf
             name: userapi-dynamic-config-claim0
-        - image: dparra0007/static-config:20180522-2
+        - image: iaghcp-docker-technical-architecture.jfrog.io/static-config:1.0.0
           name: dparra0007-config
           env:
           - name: GLOBALCONF
@@ -117,7 +117,7 @@ items:
           volumeMounts:
           - mountPath: /usr/src/app/conf
             name: userapi-config-claim0
-        - image: dparra0007/dynamic-config:nodejs-20180525-2
+        - image: iaghcp-docker-technical-architecture.jfrog.io/dynamic-config:1.0.0
           name: dparra0007-dynamic-config
           env:
           - name: REMOTE_APPSETTINGS

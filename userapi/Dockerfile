@@ -1,4 +1,4 @@
-FROM node:6.10.3-onbuild
+FROM iaghcp-docker-technical-architecture.jfrog.io/node:6.10.3-onbuild
 
 RUN mkdir -p /usr/src/conf && \
     chown -R 1000:0 /usr/src/conf && chmod -R og+rwx /usr/src/conf && \

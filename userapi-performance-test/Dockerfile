@@ -1,4 +1,4 @@
-FROM dparra0007/taurus:20180402-2
+FROM iaghcp-docker-technical-architecture.jfrog.io/taurus:1.0.0
 
 COPY ./test.yml /bzt-configs/test.yml
 

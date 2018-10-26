@@ -1,4 +1,4 @@
-FROM dparra0007/mongodb-ephimeral:40786
+FROM iaghcp-docker-technical-architecture.jfrog.io/mongodb-ephimeral:1.0.0
 
 ENV AUTH=no
 
