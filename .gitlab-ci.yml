@@ -71,8 +71,6 @@ build_service:
     - docker build -t $GITLAB_SERVICE_REGISTRY ./userapi
     - docker tag $GITLAB_SERVICE_REGISTRY $GITLAB_SERVICE_REGISTRY:$CI_COMMIT_REF_NAME
     - docker push $GITLAB_SERVICE_REGISTRY:$CI_COMMIT_REF_NAME
-  dependencies:
-    - build_service_java
   except:
     - triggers
 
