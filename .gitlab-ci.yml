@@ -29,6 +29,7 @@ build_service_node:
   stage: build code
   image: iaghcp-docker-technical-architecture.jfrog.io/node:latest
   before_script:
+    - cd ./userapi
     # Install JFrog CLI
     - curl -fL https://getcli.jfrog.io | sh
     # Configure Artifactory instance with JFrog CLI
