@@ -68,9 +68,11 @@ build_service:
   stage: build application
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    - docker build -t registry.gitlab.com/w53/w53-userapi/userapi ./userapi
-    - docker tag registry.gitlab.com/w53/w53-userapi/userapi registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME
-    - docker push registry.gitlab.com/w53/w53-userapi/userapi:$CI_COMMIT_REF_NAME
+    - docker build -t $GITLAB_SERVICE_REGISTRY ./userapi
+    - docker tag $GITLAB_SERVICE_REGISTRY $GITLAB_SERVICE_REGISTRY:$CI_COMMIT_REF_NAME
+    - docker push $GITLAB_SERVICE_REGISTRY:$CI_COMMIT_REF_NAME
+  dependencies:
+    - build_service_java
   except:
     - triggers
 
@@ -78,9 +80,9 @@ build_db:
   stage: build application
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    - docker build -t registry.gitlab.com/w53/w53-userapi/userapi-db ./userapi-db
-    - docker tag registry.gitlab.com/w53/w53-userapi/userapi-db registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME
-    - docker push registry.gitlab.com/w53/w53-userapi/userapi-db:$CI_COMMIT_REF_NAME
+    - docker build -t $GITLAB_DB_REGISTRY ./userapi-db
+    - docker tag $GITLAB_DB_REGISTRY $GITLAB_DB_REGISTRY:$CI_COMMIT_REF_NAME
+    - docker push $GITLAB_DB_REGISTRY:$CI_COMMIT_REF_NAME
   except:
     - triggers
 
