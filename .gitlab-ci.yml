@@ -53,6 +53,7 @@ lint_service:
   before_script:
     - npm install eslint -g
     - npm install eslint-config-airbnb-base -g
+    - npm install eslint-plugin-import -g
   script:
     - eslint -f json -o report.json .
   artifacts:
