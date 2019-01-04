@@ -48,7 +48,7 @@ build_service_node:
     - triggers
 
 lint_service:
-  stage: test code
+  stage: build code
   image: iaghcp-docker-technical-architecture.jfrog.io/node:latest
   before_script:
     - npm install eslint -g
