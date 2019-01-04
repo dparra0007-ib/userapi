@@ -56,7 +56,7 @@ lint_service:
     - npm install eslint-plugin-import -g
   script:
     - cd ./userapi
-    - eslint -f json -o report.json .
+    - eslint --debug -f json -o report.json .
   artifacts:
     paths:
       - ./report.json
