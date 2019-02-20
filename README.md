@@ -200,6 +200,7 @@ functional_test_service:
 ```
 
   A free tool to easily and productive way of working with REST APIs is [Postman](https://www.getpostman.com/). With Postman it's easy to create tests, use different enviroments for tests executions, share data between tests and execute automatic tests with [Newman tool](https://github.com/postmanlabs/newman). In this stage we take adventadge of all of them to run automatic functional tests scripted with Javascript in Postman and executed with Newman.
+  The functional test cases are implemented in a postman collection available in this [link](https://documenter.getpostman.com/view/651996/S11DV2wr).
 
 - performance testing. In test application stage.
 
