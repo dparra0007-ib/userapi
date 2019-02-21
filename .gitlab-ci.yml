@@ -134,10 +134,14 @@ functional_test_service:
     - export TAG=$CI_COMMIT_REF_NAME 
     - docker-compose -f docker-compose.functional.test.yml up -d
     - sleep 60s
-    - >-
-      echo "curl curl -H \"Content-Type: text/xml\" -X POST -H \"Authorization: Bearer $token\” --data @\"outputfile.xml\" https://xray.cloud.xpand-it.com/api/v1/import/execution/junit?testExecKey=$XRAY_FUNC_TEST"
     # - >-
-    #   curl -H "Content-Type: text/xml" -X POST -H "Authorization: Bearer $token” --data @"outputfile.xml" https://xray.cloud.xpand-it.com/api/v1/import/execution/junit?testExecKey=$XRAY_FUNC_TEST
+    #   echo "curl curl -H \"Content-Type: text/xml\" -X POST -H \"Authorization: Bearer $token\” --data @\"outputfile.xml\" https://xray.cloud.xpand-it.com/api/v1/import/execution/junit?testExecKey=$XRAY_FUNC_TEST"
+    - >-
+        curl 
+        -H "Content-Type: text/xml" 
+        -X POST -H "Authorization: Bearer $token” 
+        --data @"outputfile.xml" 
+        https://xray.cloud.xpand-it.com/api/v1/import/execution/junit?testExecKey=$XRAY_FUNC_TEST
     - docker logs $(docker ps -a --filter ancestor=iaghcp-docker-technical-architecture.jfrog.io/newman:1.0.0 --format "{{.ID}}")
   after_script:
     - docker stop $(docker ps -a --filter status=running --format "{{.ID}}") > /dev/null
