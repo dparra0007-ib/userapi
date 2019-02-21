@@ -127,17 +127,24 @@ functional_test_service:
     - curl -L https://github.com/docker/compose/releases/download/1.14.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
     - chmod +x /usr/local/bin/docker-compose
     - pip install docker-compose
+    - >-
+      export token=$(curl -H "Content-Type: application/json" -X POST --data "{ \"client_id\": \"$JIRA_CLIENT_ID\",\"client_secret\": \"$JIRA_SECRET_ID\" }" https://xray.cloud.xpand-it.com/api/v1/authenticate| tr -d '"')
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - export TAG=$CI_COMMIT_REF_NAME 
     - docker-compose -f docker-compose.functional.test.yml up -d
-    - sleep 90s
+    - sleep 120s
+    - >-
+      curl -H "Content-Type: text/xml" -X POST -H "Authorization: Bearer $token” --data @"outputfile.xml" https://xray.cloud.xpand-it.com/api/v1/import/execution/junit?testExecKey=$XRAY_FUNC_TEST
     - docker logs $(docker ps -a --filter ancestor=iaghcp-docker-technical-architecture.jfrog.io/newman:1.0.0 --format "{{.ID}}")
   after_script:
     - docker stop $(docker ps -a --filter status=running --format "{{.ID}}") > /dev/null
     - docker rm $(docker ps -a -q) -f > /dev/null
     - docker rmi $(docker images -q) -f > /dev/null || true
   when: manual
+  artifacts:
+    paths:
+      - ./outputfile.xml
   only:
     - master
   except:

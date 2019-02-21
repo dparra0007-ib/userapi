@@ -34,6 +34,8 @@ services:
   userapi-functional-test:
     build:
       context: ./userapi-functional-test
+    volumes:
+      - $PWD:/var/newman/
     links:
       - userapi
     depends_on:
