@@ -139,7 +139,7 @@ functional_test_service:
     - >-
         curl 
         -H "Content-Type: text/xml" 
-        -X POST -H "Authorization: Bearer $token” 
+        -X POST -H "Authorization: Bearer $token" 
         --data @"outputfile.xml" 
         https://xray.cloud.xpand-it.com/api/v1/import/execution/junit?testExecKey=$XRAY_FUNC_TEST
     - docker logs $(docker ps -a --filter ancestor=iaghcp-docker-technical-architecture.jfrog.io/newman:1.0.0 --format "{{.ID}}")
