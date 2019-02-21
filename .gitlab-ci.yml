@@ -278,6 +278,7 @@ functional_regression_test_staging:
   stage: regression test deploy
   image: iaghcp-docker-technical-architecture.jfrog.io/newman:1.0.0
   before_script:
+    - apk add --update curl
     - >-
       export token=$(curl -H "Content-Type: application/json" -X POST --data "{ \"client_id\": \"$JIRA_CLIENT_ID\",\"client_secret\": \"$JIRA_SECRET_ID\" }" https://xray.cloud.xpand-it.com/api/v1/authenticate| tr -d '"')
   script:
@@ -295,6 +296,7 @@ functional_regression_test_production:
   stage: regression test deploy
   image: iaghcp-docker-technical-architecture.jfrog.io/newman:1.0.0
   before_script:
+    - apk add --update curl
     - >-
       export token=$(curl -H "Content-Type: application/json" -X POST --data "{ \"client_id\": \"$JIRA_CLIENT_ID\",\"client_secret\": \"$JIRA_SECRET_ID\" }" https://xray.cloud.xpand-it.com/api/v1/authenticate| tr -d '"')
   script:
