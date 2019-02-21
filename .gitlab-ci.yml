@@ -276,17 +276,35 @@ deploy_production:
 
 functional_regression_test_staging:
   stage: regression test deploy
-  image: dparra0007/newman:20170712-4
+  image: iaghcp-docker-technical-architecture.jfrog.io/newman:1.0.0
+  before_script:
+    - >-
+      export token=$(curl -H "Content-Type: application/json" -X POST --data "{ \"client_id\": \"$JIRA_CLIENT_ID\",\"client_secret\": \"$JIRA_SECRET_ID\" }" https://xray.cloud.xpand-it.com/api/v1/authenticate| tr -d '"')
   script:
-    - newman run https://www.getpostman.com/collections/6d9fe4f1a0033de5a2af --reporters cli,json --reporter-json-export outputfile.json --environment https://api.getpostman.com/environments/651996-f4ff0aa5-3c70-edbe-ddb1-d81231001eb4?apikey=100822fe2bd7454eb916c8ebdd4be266
+    - newman run https://www.getpostman.com/collections/6d9fe4f1a0033de5a2af --reporters cli,junit --reporter-junit-export outputfile.xml --environment https://api.getpostman.com/environments/651996-f4ff0aa5-3c70-edbe-ddb1-d81231001eb4?apikey=100822fe2bd7454eb916c8ebdd4be266
+    - >-
+        curl 
+        -H "Content-Type: text/xml" 
+        -X POST -H "Authorization: Bearer $token" 
+        --data @"outputfile.xml" 
+        https://xray.cloud.xpand-it.com/api/v1/import/execution/junit?testExecKey=$XRAY_REGRESSION_TEST_STG
   only:
       - master
 
 functional_regression_test_production:
   stage: regression test deploy
-  image: dparra0007/newman:20170712-4
+  image: iaghcp-docker-technical-architecture.jfrog.io/newman:1.0.0
+  before_script:
+    - >-
+      export token=$(curl -H "Content-Type: application/json" -X POST --data "{ \"client_id\": \"$JIRA_CLIENT_ID\",\"client_secret\": \"$JIRA_SECRET_ID\" }" https://xray.cloud.xpand-it.com/api/v1/authenticate| tr -d '"')
   script:
-    - newman run https://www.getpostman.com/collections/6d9fe4f1a0033de5a2af --reporters cli,json --reporter-json-export outputfile.json --environment https://api.getpostman.com/environments/651996-b6820a2c-0306-45c6-b5ab-1db91a8f727e?apikey=100822fe2bd7454eb916c8ebdd4be266
+    - newman run https://www.getpostman.com/collections/6d9fe4f1a0033de5a2af --reporters cli,junit --reporter-junit-export outputfile.xml --environment https://api.getpostman.com/environments/651996-b6820a2c-0306-45c6-b5ab-1db91a8f727e?apikey=100822fe2bd7454eb916c8ebdd4be266
+    - >-
+        curl 
+        -H "Content-Type: text/xml" 
+        -X POST -H "Authorization: Bearer $token" 
+        --data @"outputfile.xml" 
+        https://xray.cloud.xpand-it.com/api/v1/import/execution/junit?testExecKey=$XRAY_REGRESSION_TEST_PRO
   when: manual
   only:
       - master
