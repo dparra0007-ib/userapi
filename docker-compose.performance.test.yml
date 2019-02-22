@@ -36,6 +36,8 @@ services:
   userapi-performance-test:
     build:
       context: ./userapi-performance-test
+    volumes:
+      - $PWD:/tmp/artifacts
     environment:
       - REPORT=${TEST_NUMBER}
     links:

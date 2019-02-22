@@ -1,5 +1,6 @@
-FROM iaghcp-docker-technical-architecture.jfrog.io/taurus:1.0.0
+FROM iaghcp-docker-technical-architecture.jfrog.io/taurus:1.1.0
+
+ADD test.sh test.sh
+RUN chmod +x ./test.sh
 
 COPY ./test.yml /bzt-configs/test.yml
-
-CMD ["/bin/bash", "-c", "sleep 30 && curl --request GET --url 'https://api.getpostman.com/environments/651996-b80ed237-9179-35ec-d8a1-35d574e118c8' --header 'X-Api-Key: 100822fe2bd7454eb916c8ebdd4be266' > ci.json && wget -O collection.json https://www.getpostman.com/collections/6d9fe4f1a0033de5a2af && bzt /bzt-configs/test.yml -o modules.blazemeter.report-name=\"$REPORT\" "]

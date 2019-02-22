@@ -21,4 +21,4 @@ reporting:
   test: CI
   project: USERAPI
 - module: junit-xml
-  filename: outputfile.xml
+  filename: /tmp/artifacts/outputfile.xml
