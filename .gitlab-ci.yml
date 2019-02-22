@@ -163,12 +163,20 @@ performance_test_service:
     - curl -L https://github.com/docker/compose/releases/download/1.14.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
     - chmod +x /usr/local/bin/docker-compose
     - pip install docker-compose
+    - >-
+      export token=$(curl -H "Content-Type: application/json" -X POST --data "{ \"client_id\": \"$JIRA_CLIENT_ID\",\"client_secret\": \"$JIRA_SECRET_ID\" }" https://xray.cloud.xpand-it.com/api/v1/authenticate| tr -d '"')
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - export TAG=$CI_COMMIT_REF_NAME 
     - export TEST_NUMBER=$CI_COMMIT_SHA
     - docker-compose -f docker-compose.performance.test.yml up -d
     - sleep 120s
+    - >-
+        curl 
+        -H "Content-Type: text/xml" 
+        -X POST -H "Authorization: Bearer $token" 
+        --data @"outputfile.xml" 
+        https://xray.cloud.xpand-it.com/api/v1/import/execution/junit?testExecKey=$XRAY_PERF_TEST
     - docker logs $(docker ps -a --filter ancestor=iaghcp-docker-technical-architecture.jfrog.io/taurus:1.0.0 --format "{{.ID}}")
   after_script:
     - docker stop $(docker ps -a --filter status=running --format "{{.ID}}") > /dev/null

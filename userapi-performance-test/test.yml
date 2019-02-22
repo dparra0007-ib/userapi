@@ -20,3 +20,5 @@ reporting:
 - module: blazemeter
   test: CI
   project: USERAPI
+- module: junit-xml
+  filename: outputfile.xml
