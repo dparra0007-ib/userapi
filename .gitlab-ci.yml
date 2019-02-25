@@ -177,7 +177,7 @@ performance_test_service:
         -X POST -H "Authorization: Bearer $token" 
         --data @"outputfile.xml" 
         https://xray.cloud.xpand-it.com/api/v1/import/execution/junit?testExecKey=$XRAY_PERF_TEST
-    - docker logs $(docker ps -a --filter ancestor=iaghcp-docker-technical-architecture.jfrog.io/taurus:1.0.0 --format "{{.ID}}")
+    - docker logs $(docker ps -a --filter ancestor=iaghcp-docker-technical-architecture.jfrog.io/taurus:1.1.0 --format "{{.ID}}")
   after_script:
     - docker stop $(docker ps -a --filter status=running --format "{{.ID}}") > /dev/null
     - docker rm $(docker ps -a -q) -f > /dev/null
