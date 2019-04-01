@@ -99,10 +99,14 @@ validate_api_description:
   before_script:
     - apk update
     - apk upgrade
-    - apk add python python-dev py-pip build-base
     - curl -L https://github.com/docker/compose/releases/download/1.14.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
     - chmod +x /usr/local/bin/docker-compose
-    - pip install docker-compose
+    - apk add --no-cache python3 py3-pip python3-dev
+    - apk add --no-cache openssl-dev libffi-dev build-base
+    - pip3 install --upgrade pip
+    - pip3 install --upgrade setuptools
+    - pip3 install cffi
+    - pip3 install docker-compose
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - export TAG=$CI_COMMIT_REF_NAME 
@@ -123,10 +127,14 @@ functional_test_service:
   before_script:
     - apk update
     - apk upgrade
-    - apk add python python-dev py-pip build-base
     - curl -L https://github.com/docker/compose/releases/download/1.14.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
     - chmod +x /usr/local/bin/docker-compose
-    - pip install docker-compose
+    - apk add --no-cache python3 py3-pip python3-dev
+    - apk add --no-cache openssl-dev libffi-dev build-base
+    - pip3 install --upgrade pip
+    - pip3 install --upgrade setuptools
+    - pip3 install cffi
+    - pip3 install docker-compose
     - >-
       export token=$(curl -H "Content-Type: application/json" -X POST --data "{ \"client_id\": \"$JIRA_CLIENT_ID\",\"client_secret\": \"$JIRA_SECRET_ID\" }" https://xray.cloud.xpand-it.com/api/v1/authenticate| tr -d '"')
   script:
@@ -159,10 +167,14 @@ performance_test_service:
   before_script:
     - apk update
     - apk upgrade
-    - apk add python python-dev py-pip build-base
     - curl -L https://github.com/docker/compose/releases/download/1.14.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
     - chmod +x /usr/local/bin/docker-compose
-    - pip install docker-compose
+    - apk add --no-cache python3 py3-pip python3-dev
+    - apk add --no-cache openssl-dev libffi-dev build-base
+    - pip3 install --upgrade pip
+    - pip3 install --upgrade setuptools
+    - pip3 install cffi
+    - pip3 install docker-compose
     - >-
       export token=$(curl -H "Content-Type: application/json" -X POST --data "{ \"client_id\": \"$JIRA_CLIENT_ID\",\"client_secret\": \"$JIRA_SECRET_ID\" }" https://xray.cloud.xpand-it.com/api/v1/authenticate| tr -d '"')
   script:
